@@ -19,8 +19,8 @@ ID = [a-z][_a-zA-Z0-9]*
 ENTERO = (-)?[0-9]+
 FLOTANTE = [0-9]+"."[0-9]+
 BOOL = true|false
-CARACTER = "'"[^ /n/t]"'"
-STRING = \"[^ /n/t]+\"
+CARACTER = "'"[^ \n\t]"'"
+STRING = \"[^ \n\t]+\"
 
 %%
 {KEYWORD}		{	return new TokenClass("Palabra reservada", yytext()); }
@@ -32,5 +32,5 @@ STRING = \"[^ /n/t]+\"
 {FLOTANTE}		{	return new TokenClass("float", yytext()); }
 {CARACTER}		{	return new TokenClass("char", yytext()); }
 {STRING}		{	return new TokenClass("string", yytext()); }
-[ /n/t] {}
-[^ /n/t] {	return new TokenClass("ERROR: Token no identificado", yytext(),yyline,yycolumn); }
+[ \n\t] {}
+[^ \n\t] {	return new TokenClass("ERROR: Token no identificado", yytext(),yyline,yycolumn); }
