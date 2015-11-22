@@ -1,4 +1,4 @@
 /hola_3 /*"ahsio"
 ==*/ re; @ true /*false bool 'a' "'4_'" '$'
 -8 j f 78 & 6^*/ -8 -89.2 'a'/*4hy5 4
-4.5 int hola ++ */ string  input 	/,<"vale verg la vida"
+4.5 int hola ++ */ string  input 	/,<"hola fucking world"

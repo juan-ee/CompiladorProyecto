@@ -1,3 +1,5 @@
+/* Proyecto Analizador lexico 
+* Integrantes: Juan Erazo, Luis Unapanta */
 
 package comp;
 
