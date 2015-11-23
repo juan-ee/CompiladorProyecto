@@ -1,4 +1,19 @@
-/hola_3 /*"ahsio"
-==*/ re; @ true /*false bool 'a' "'4_'" '$'
--8 j f 78 & 6^*/ -8 -89.2 'a'/*4hy5 4
-4.5 int hola ++ */ string  input 	/,<"hola fucking world"
+/* Este es un ejemplo de nuestro
+	analizador lexico */
+
+int main(){
+	int v1=5;
+	float v2=23.45;
+	bool v3=true;
+	char v4='^';
+	string v5="You Only Live Once";
+	"	asd"
+	//ejemplo de una sentencia
+	if (v1>2 && v2==23.45){
+		output v5;
+	}
+	
+	#
+	@
+	return 0; `
+}

@@ -2,8 +2,7 @@ package comp;
 
 public class TokenClass {
 	String tipo,token;
-	int num_linea,num_column;
-	
+	int num_linea,num_column;	
 	public TokenClass(String tipo, String token) {
 		super();
 		this.tipo = tipo;
