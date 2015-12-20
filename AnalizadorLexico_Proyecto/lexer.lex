@@ -29,7 +29,10 @@ CARACTER = '[^ \n\t]'
 STRING = \".+\"
 COMENT_1 = "//".*
 COMENT_M = "/*"[^"*/"]*"*/"
-
+OP_UNARIO = "++"|"--"
+OP_BINARIO = "+"|"-"|"*"|"/"
+OP_COMP = ">="|"<="|"!="|"&&"|"||"|"=="
+IGUAL = "="
 %%
 
 /*Sin usar todavia*/
@@ -54,6 +57,11 @@ COMENT_M = "/*"[^"*/"]*"*/"
 "}"		{ return new Symbol( sym.LLAV_CER,yyline+1,yycolumn+1);} 
 "["		{ return new Symbol( sym.COR_AB,yyline+1,yycolumn+1);} 
 "]"		{ return new Symbol( sym.COR_CER,yyline+1,yycolumn+1);} 
+
+{OP_UNARIO}	 {return new Symbol( sym.OP_UNARIO , yyline + 1 , yycolumn + 1 , yytext() ) ;}
+{OP_BINARIO} {return new Symbol( sym.OP_BINARIO , yyline + 1 , yycolumn + 1 , yytext() ) ;}
+{IGUAL}		 {return new Symbol( sym.IGUAL , yyline + 1 , yycolumn + 1 , yytext() ) ;}
+{OP_COMP}	 {return new Symbol( sym.OP_COMP , yyline + 1 , yycolumn + 1 , yytext() ) ;}
 
 /*Ignora los espacios y comentarios*/
 [ \n\t\r]
