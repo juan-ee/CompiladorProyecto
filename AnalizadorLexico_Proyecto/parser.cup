@@ -1,0 +1,22 @@
+
+package comp;
+
+import java_cup.runtime.*;
+
+parser code
+{:
+:}
+
+action code
+{:
+:}
+
+terminal		ANY,STRING;
+
+non terminal	grammar;
+
+grammar			::=	ANY
+				{:
+				:}
+				
+				;

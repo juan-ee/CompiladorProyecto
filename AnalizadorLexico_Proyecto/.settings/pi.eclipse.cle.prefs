@@ -1,0 +1,11 @@
+//parser.cup/cup-compact-red=false
+//parser.cup/cup-debug=false
+//parser.cup/cup-expected-conflicts=0
+//parser.cup/cup-no-positions=false
+//parser.cup/cup-no-scanner=false
+//parser.cup/cup-non-terms=false
+//parser.cup/cup-output=src
+//parser.cup/cup-parser-class=AnalizadorSintactico
+//parser.cup/cup-symbols-class=sym
+//parser.cup/cup-symbols-if=true
+eclipse.preferences.version=1

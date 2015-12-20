@@ -1,52 +1,50 @@
 Lexema,TokenClass,Linea de Error,Columna de Error
-int,Palabra reservada,-,-
-main(),Funcion,-,-
-{,Caracter especial,-,-
-int,Palabra reservada,-,-
-v1,Identificador,-,-
-=,Caracter especial,-,-
-5,int,-,-
-;,Caracter especial,-,-
-float,Palabra reservada,-,-
-v2,Identificador,-,-
-=,Caracter especial,-,-
-23.45,float,-,-
-;,Caracter especial,-,-
-bool,Palabra reservada,-,-
-v3,Identificador,-,-
-=,Caracter especial,-,-
-true,bool,-,-
-;,Caracter especial,-,-
-char,Palabra reservada,-,-
-v4,Identificador,-,-
-=,Caracter especial,-,-
-'^',char,-,-
-;,Caracter especial,-,-
-string,Palabra reservada,-,-
-v5,Identificador,-,-
-=,Caracter especial,-,-
-"""You Only Live Once""",string,-,-
-;,Caracter especial,-,-
-"""	asd""",string,-,-
-if,Palabra reservada,-,-
-(,Caracter especial,-,-
-v1,Identificador,-,-
->,Caracter especial,-,-
-2,int,-,-
-&&,Operador compuesto,-,-
-v2,Identificador,-,-
-==,Operador compuesto,-,-
-23.45,float,-,-
-),Caracter especial,-,-
-{,Caracter especial,-,-
-output,Palabra reservada,-,-
-v5,Identificador,-,-
-;,Caracter especial,-,-
-},Caracter especial,-,-
-"#",ERROR: Token no identificado,15,1
-@,ERROR: Token no identificado,16,1
-return,Palabra reservada,-,-
-0,int,-,-
-;,Caracter especial,-,-
-`,ERROR: Token no identificado,17,11
-},Caracter especial,-,-
+int,Palabra reservada
+main(),Funcion
+{,Caracter especial
+int,Palabra reservada
+v1,Identificador
+=,Caracter especial
+5,int
+;,Caracter especial
+float,Palabra reservada
+v2,Identificador
+=,Caracter especial
+23.45,float
+;,Caracter especial
+bool,Palabra reservada
+v3,Identificador
+=,Caracter especial
+true,bool
+;,Caracter especial
+char,Palabra reservada
+v4,Identificador
+=,Caracter especial
+'^',char
+;,Caracter especial
+string,Palabra reservada
+v5,Identificador
+=,Caracter especial
+"""You Only Live Once""",string
+;,Caracter especial
+"""	asd""",string
+if,Palabra reservada
+(,Caracter especial
+v1,Identificador
+>,Caracter especial
+2,int
+&&,Operador compuesto
+v2,Identificador
+==,Operador compuesto
+23.4,float
+5,int
+),Caracter especial
+{,Caracter especial
+output,Palabra reservada
+v5,Identificador
+;,Caracter especial
+},Caracter especial
+return,Palabra reservada
+0,int
+;,Caracter especial
+},Caracter especial
