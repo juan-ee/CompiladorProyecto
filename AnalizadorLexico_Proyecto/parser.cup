@@ -26,11 +26,12 @@ terminal OP_COMP,CARACT_ESP,CARACTER,FLOTANTE,ENTERO,KEYWORD,STRING,BOOL;
 
 terminal String TIPO,ID,END,COMA,DOSPUN ;
 terminal PAR_AB,PAR_CER,LLAV_AB,LLAV_CER,COR_AB,COR_CER ;
+terminal IGUAL, OP_UNARIO, OP_BINARIO,OP_COMP;
 
 non terminal expr,EXP,exprvec,expr_list,decl_var,decl_vec,decl_fun,ENCAB,CUERPO,BLOQUE; 
 non terminal LISTA,LISTAV,VECT,DECL_LOC;
-non terminal COMANDO_SIM;
-
+non terminal COMANDO_SIM,ATRIBUCIONES,EXPRESION;
+non terminal E,F;
 
  
 expr_list ::=   expr_list decl_var| decl_var |expr_list decl_vec| decl_vec|
@@ -64,6 +65,17 @@ expr_list ::=   expr_list decl_var| decl_var |expr_list decl_vec| decl_vec|
  
  BLOQUE ::= BLOQUE COMANDO_SIM END|COMANDO_SIM END ; 
   
- /*Declaracion de Comandos Simple*/ 
+/*Declaracion de Comandos Simple*/ 
  
- COMANDO_SIM ::= TIPO;
+ COMANDO_SIM ::= ATRIBUCIONES;
+ 
+ /*Declaraciones de Atribuciones */
+ 
+ ATRIBUCIONES ::= ID IGUAL EXPRESION;
+ 
+ /*Declaracion de Expresiones*/
+  
+ EXPRESION ::= E|ID OP_UNARIO;
+  
+	E ::= E OP_BINARIO F|F;
+	F ::= ID|PAR_AB E PAR_CER;
