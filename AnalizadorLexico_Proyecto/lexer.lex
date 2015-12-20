@@ -1,4 +1,4 @@
-/*Analizador Lexico*/
+/*Anafflizador Lexico*/
 /*Integrantes: Juan Erazo, Luis Unapanta*/
 
 package comp;
@@ -17,8 +17,7 @@ import java_cup.runtime.*;
 KEYWORD = if|else|then|while|do|input|output|return
 TIPO = int|float|char|String|bool
 
-CARACT_ESP = "+"|"-"|"*"|"/"|">"|"<"|"="|"!"|"&"|"$"
-OP_COMP = ">="|"<="|"!="|"&&"|"||"|"=="
+CARACT_ESP = ">"|"<"|"!"|"&"|"$"
 
 
 ID = [a-z][_a-zA-Z0-9]*
@@ -36,14 +35,13 @@ IGUAL = "="
 %%
 
 /*Sin usar todavia*/
-{CARACT_ESP} { return new Symbol( sym.CARACT_ESP );}
-{OP_COMP} { return new Symbol( sym.OP_COMP );}
-{ENTERO} { return new Symbol( sym.ENTERO );}
-{FLOTANTE} { return new Symbol( sym.FLOTANTE );}
-{CARACTER} { return new Symbol( sym.CARACTER );}
-{STRING} { return new Symbol( sym.STRING );}
-{BOOL} { return new Symbol( sym.BOOL );}
-{KEYWORD}  { return new Symbol( sym.KEYWORD ) ;  }
+{CARACT_ESP} { return new Symbol( sym.CARACT_ESP, yyline + 1 , yycolumn + 1  );}
+{ENTERO} { return new Symbol( sym.ENTERO, yyline + 1 , yycolumn + 1  );}
+{FLOTANTE} { return new Symbol( sym.FLOTANTE, yyline + 1 , yycolumn + 1  );}
+{CARACTER} { return new Symbol( sym.CARACTER, yyline + 1 , yycolumn + 1  );}
+{STRING} { return new Symbol( sym.STRING, yyline + 1 , yycolumn + 1  );}
+{BOOL} { return new Symbol( sym.BOOL, yyline + 1 , yycolumn + 1  );}
+{KEYWORD}  { return new Symbol( sym.KEYWORD, yyline + 1 , yycolumn + 1  ) ;  }
 
 /*Usados actualmente*/
 {TIPO}  { return new Symbol( sym.TIPO,yyline+1,yycolumn+1) ;  }
@@ -58,10 +56,10 @@ IGUAL = "="
 "["		{ return new Symbol( sym.COR_AB,yyline+1,yycolumn+1);} 
 "]"		{ return new Symbol( sym.COR_CER,yyline+1,yycolumn+1);} 
 
-{OP_UNARIO}	 {return new Symbol( sym.OP_UNARIO , yyline + 1 , yycolumn + 1 , yytext() ) ;}
-{OP_BINARIO} {return new Symbol( sym.OP_BINARIO , yyline + 1 , yycolumn + 1 , yytext() ) ;}
-{IGUAL}		 {return new Symbol( sym.IGUAL , yyline + 1 , yycolumn + 1 , yytext() ) ;}
-{OP_COMP}	 {return new Symbol( sym.OP_COMP , yyline + 1 , yycolumn + 1 , yytext() ) ;}
+{OP_UNARIO}	 {return new Symbol( sym.OP_UNARIO , yyline + 1 , yycolumn + 1  ) ;}
+{OP_BINARIO} {return new Symbol( sym.OP_BINARIO , yyline + 1 , yycolumn + 1 ) ;}
+{IGUAL}		 {return new Symbol( sym.IGUAL , yyline + 1 , yycolumn + 1  ) ;}
+{OP_COMP}	 {return new Symbol( sym.OP_COMP , yyline + 1 , yycolumn + 1  ) ;}
 
 /*Ignora los espacios y comentarios*/
 [ \n\t\r]

@@ -21,7 +21,7 @@ action code
 :}
 
 /*los terminales que aun no se usan*/
-terminal OP_COMP,CARACT_ESP,CARACTER,FLOTANTE,ENTERO,KEYWORD,STRING,BOOL;
+terminal CARACT_ESP,CARACTER,FLOTANTE,ENTERO,KEYWORD,STRING,BOOL;
 
 
 terminal String TIPO,ID,END,COMA,DOSPUN ;

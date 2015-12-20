@@ -7,11 +7,11 @@ int: funcion(int:a, char:b){
 int:a;
 float:b;
 
-int;
+int:asd;
 }
 
 int: funcion2(){
 
-float;
+float:asd;
 }
 //JOKO
