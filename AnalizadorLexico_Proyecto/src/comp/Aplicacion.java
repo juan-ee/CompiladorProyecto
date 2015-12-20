@@ -7,8 +7,7 @@ public class Aplicacion {
 	public static void main(String[] args) {
 		 try {	            
 	            AnalizadorLexico lexer = new AnalizadorLexico( new FileReader("entrada.txt") );	            
-	            AnalizadorSintactico p = new AnalizadorSintactico(lexer);
-	            
+	            AnalizadorSintactico p = new AnalizadorSintactico(lexer);	            
 	            p.parse();
 	            
 	        } catch (Exception e) {

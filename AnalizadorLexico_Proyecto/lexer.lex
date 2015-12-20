@@ -32,8 +32,17 @@ COMENT_M = "/*"[^"*/"]*"*/"
 
 %%
 
+/*Sin usar todavia*/
+{CARACT_ESP} { return new Symbol( sym.CARACT_ESP );}
+{OP_COMP} { return new Symbol( sym.OP_COMP );}
+{ENTERO} { return new Symbol( sym.ENTERO );}
+{FLOTANTE} { return new Symbol( sym.FLOTANTE );}
+{CARACTER} { return new Symbol( sym.CARACTER );}
+{STRING} { return new Symbol( sym.STRING );}
 {BOOL} { return new Symbol( sym.BOOL );}
 {KEYWORD}  { return new Symbol( sym.KEYWORD ) ;  }
+
+/*Usados actualmente*/
 {TIPO}  { return new Symbol( sym.TIPO,yyline+1,yycolumn+1) ;  }
 {ID}    { return new Symbol( sym.ID,yyline+1,yycolumn+1) ;  }
 ";"   	{ return new Symbol( sym.END,yyline+1,yycolumn+1) ;  }
@@ -45,14 +54,6 @@ COMENT_M = "/*"[^"*/"]*"*/"
 "}"		{ return new Symbol( sym.LLAV_CER,yyline+1,yycolumn+1);} 
 "["		{ return new Symbol( sym.COR_AB,yyline+1,yycolumn+1);} 
 "]"		{ return new Symbol( sym.COR_CER,yyline+1,yycolumn+1);} 
-
-/*Sin usar todavia*/
-{CARACT_ESP} { return new Symbol( sym.CARACT_ESP );}
-{OP_COMP} { return new Symbol( sym.OP_COMP );}
-{ENTERO} { return new Symbol( sym.ENTERO );}
-{FLOTANTE} { return new Symbol( sym.FLOTANTE );}
-{CARACTER} { return new Symbol( sym.CARACTER );}
-{STRING} { return new Symbol( sym.STRING );}
 
 /*Ignora los espacios y comentarios*/
 [ \n\t\r]
