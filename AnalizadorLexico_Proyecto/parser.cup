@@ -5,18 +5,65 @@ import java_cup.runtime.*;
 
 parser code
 {:
+
+public void syntax_error( Symbol s ){
+	System.out.println("Error de Sintaxis:"+"En linea " + s.left+" y columna " + s.right );
+}
+
+public void unrecovered_syntax_error( Symbol s ) throws java.lang.Exception{
+	
+}
+
 :}
 
 action code
 {:
 :}
 
-terminal		ANY,STRING;
+/*los terminales que aun no se usan*/
+terminal OP_COMP,CARACT_ESP,CARACTER,FLOTANTE,ENTERO,KEYWORD,STRING,BOOL;
 
-non terminal	grammar;
 
-grammar			::=	ANY
-				{:
-				:}
-				
-				;
+terminal String TIPO,ID,END,COMA,DOSPUN ;
+terminal PAR_AB,PAR_CER,LLAV_AB,LLAV_CER,COR_AB,COR_CER ;
+
+non terminal expr,EXP,exprvec,expr_list,decl_var,decl_vec,decl_fun,ENCAB,CUERPO,BLOQUE; 
+non terminal LISTA,LISTAV,VECT,DECL_LOC;
+non terminal COMANDO_SIM;
+
+
+ 
+expr_list ::=   expr_list decl_var| decl_var |expr_list decl_vec| decl_vec|
+				expr_list decl_fun| decl_fun|error;
+                 
+/*Declaracion de variables globales*/   
+   	decl_var ::=   expr END;
+   
+   	expr ::= TIPO DOSPUN LISTA {: System.out.println("doc ok"); :};
+	LISTA ::= LISTA COMA ID
+         | ID;
+   
+/*Declaracion de vectores globales*/   
+   	
+   	decl_vec ::=   exprvec END; 
+   	
+   	exprvec ::= TIPO DOSPUN LISTAV {: System.out.println("doc ok"); :};
+	LISTAV ::= LISTAV COMA VECT|VECT;
+	VECT ::= ID COR_AB COR_CER;
+ 
+ /*Declaracion de funciones*/
+ 
+ decl_fun ::= ENCAB CUERPO;
+ 
+ ENCAB ::= TIPO DOSPUN ID PAR_AB EXP PAR_CER ;
+ EXP ::= EXP COMA TIPO DOSPUN ID|TIPO DOSPUN ID| ;
+ CUERPO ::= LLAV_AB DECL_LOC BLOQUE LLAV_CER|LLAV_AB BLOQUE LLAV_CER|LLAV_AB LLAV_CER;
+ DECL_LOC ::= DECL_LOC decl_var| decl_var ;
+ 
+ /*Declaracion de Bloque*/   
+ 
+ BLOQUE ::= BLOQUE COMANDO_SIM END|COMANDO_SIM END ; 
+  
+ /*Declaracion de Comandos Simple*/ 
+ 
+ COMANDO_SIM ::= TIPO;

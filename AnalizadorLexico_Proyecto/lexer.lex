@@ -14,13 +14,14 @@ import java_cup.runtime.*;
 %column
 
 
-KEYWORD = int|float|bool|char|string|if|else|then|while|do|input|output|return
-CARACT_ESP = ","|";"|":"|"("|")"|"["|"]"|"{"|"}"|"+"|"-"|"*"|"/"|">"|"<"|"="|"!"|"&"|"$"
+KEYWORD = if|else|then|while|do|input|output|return
+TIPO = int|float|char|String|bool
+
+CARACT_ESP = "+"|"-"|"*"|"/"|">"|"<"|"="|"!"|"&"|"$"
 OP_COMP = ">="|"<="|"!="|"&&"|"||"|"=="
 
 
 ID = [a-z][_a-zA-Z0-9]*
-FUNCION = {ID}"()" 
 ENTERO = -?[0-9]+
 FLOTANTE = {ENTERO}"."[0-9]+
 BOOL = true|false
@@ -31,22 +32,33 @@ COMENT_M = "/*"[^"*/"]*"*/"
 
 %%
 
-/*{KEYWORD}		{	return new TokenClass("Palabra reservada", yytext()); }
-{CARACT_ESP}		{	return new TokenClass("Caracter especial", yytext()); }
-{OP_COMP}		{	return new TokenClass("Operador compuesto", yytext()); }
-{BOOL} {	return new TokenClass("bool", yytext()); }
-{ID}		{	return new TokenClass("Identificador", yytext()); }
-{FUNCION}		{	return new TokenClass("Funcion", yytext()); }
-{ENTERO}		{	return new TokenClass("int", yytext()); }
-{FLOTANTE}		{	return new TokenClass("float", yytext()); }
-{CARACTER}		{	return new TokenClass("char", yytext()); }
-{STRING}		{	return new TokenClass("string", yytext()); }*/
+{BOOL} { return new Symbol( sym.BOOL );}
+{KEYWORD}  { return new Symbol( sym.KEYWORD ) ;  }
+{TIPO}  { return new Symbol( sym.TIPO,yyline+1,yycolumn+1) ;  }
+{ID}    { return new Symbol( sym.ID,yyline+1,yycolumn+1) ;  }
+";"   	{ return new Symbol( sym.END,yyline+1,yycolumn+1) ;  }
+"," 	{ return new Symbol( sym.COMA,yyline+1,yycolumn+1) ;  }
+":"		{ return new Symbol( sym.DOSPUN,yyline+1,yycolumn+1) ;}
+"("		{ return new Symbol( sym.PAR_AB,yyline+1,yycolumn+1);} 
+")"		{ return new Symbol( sym.PAR_CER,yyline+1,yycolumn+1);} 
+"{"		{ return new Symbol( sym.LLAV_AB,yyline+1,yycolumn+1);} 
+"}"		{ return new Symbol( sym.LLAV_CER,yyline+1,yycolumn+1);} 
+"["		{ return new Symbol( sym.COR_AB,yyline+1,yycolumn+1);} 
+"]"		{ return new Symbol( sym.COR_CER,yyline+1,yycolumn+1);} 
 
-{STRING}		{	return new Symbol(sym.STRING,yyline); }
+/*Sin usar todavia*/
+{CARACT_ESP} { return new Symbol( sym.CARACT_ESP );}
+{OP_COMP} { return new Symbol( sym.OP_COMP );}
+{ENTERO} { return new Symbol( sym.ENTERO );}
+{FLOTANTE} { return new Symbol( sym.FLOTANTE );}
+{CARACTER} { return new Symbol( sym.CARACTER );}
+{STRING} { return new Symbol( sym.STRING );}
 
+/*Ignora los espacios y comentarios*/
 [ \n\t\r]
 | {COMENT_1}
 | {COMENT_M} {}
 
+/*Errores Lexicos*/
 [^ \n\t\r] {	System.out.println("ERROR: Token no identificado --> "+yytext()+" en la linea: "+
-									(yyline+1)+", columna: "+yycolumn); }
+									(yyline+1)+", columna: "+(yycolumn+1)); }

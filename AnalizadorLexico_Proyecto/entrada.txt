@@ -1,19 +1,17 @@
-/* Este es un ejemplo de nuestro
-	analizador lexico */
+int:: b,r,j;
 
-int main(){
-	int v1=5;
-	float v2=23.45;
-	bool v3=true;
-	char v4='^';
-	string v5="You Only Live Once";
-	"	asd"
-	//ejemplo de una sentencia
-	if (v1>2 && v2==23.4.5){
-		output v5;
-	}
-	
-	#
-	@
-	return 0; `
+float: j,k,l;
+int: a[],b[];
+
+int: funcion(int:a, char:b){
+int:a;
+float:b;
+
+int;
 }
+
+int: funcion2(){
+
+float;
+}
+//JOKO
