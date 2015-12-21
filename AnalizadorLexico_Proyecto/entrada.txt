@@ -1,17 +1,53 @@
-int:: b,r,j;
-
+int: b,r,j;
 float: j,k,l;
 int: a[],b[];
 
+
+
+
 int: funcion(int:a, char:b){
+	if (id == id)
+	then{
+		a=b+c;
+	}
 int:a;
 float:b;
-
 int:asd;
+a[5]=(b+c)/(s+f);
+j=kl++;
+
+
+
+	if (id == id)
+	then{
+		
+		a=b+c;
+	}else{
+		a=b+c;
+	}
+
+	
 }
 
 int: funcion2(){
-
-float:asd;
+	float:nj;
+	b=n+l;
+	a=(b+c)/(s+f);
+	
+	do{
+		float:nj;
+		while(id >= id)
+		do{
+			b=a++;
+			if (id == id)
+			then{
+				w=g++;
+			}
+		}
+	}while (id == id);
+	
+	
+	
 }
+
 //JOKO

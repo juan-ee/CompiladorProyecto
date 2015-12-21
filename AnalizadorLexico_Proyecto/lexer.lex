@@ -1,4 +1,4 @@
-/*Anafflizador Lexico*/
+/*Analizador Lexico*/
 /*Integrantes: Juan Erazo, Luis Unapanta*/
 
 package comp;
@@ -14,7 +14,7 @@ import java_cup.runtime.*;
 %column
 
 
-KEYWORD = if|else|then|while|do|input|output|return
+KEYWORD = input|output|return
 TIPO = int|float|char|String|bool
 
 CARACT_ESP = ">"|"<"|"!"|"&"|"$"
@@ -31,10 +31,10 @@ COMENT_M = "/*"[^"*/"]*"*/"
 OP_UNARIO = "++"|"--"
 OP_BINARIO = "+"|"-"|"*"|"/"
 OP_COMP = ">="|"<="|"!="|"&&"|"||"|"=="
-IGUAL = "="
+
 %%
 
-/*Sin usar todavia*/
+/*--Tokens sin usar todavia--*/
 {CARACT_ESP} { return new Symbol( sym.CARACT_ESP, yyline + 1 , yycolumn + 1  );}
 {ENTERO} { return new Symbol( sym.ENTERO, yyline + 1 , yycolumn + 1  );}
 {FLOTANTE} { return new Symbol( sym.FLOTANTE, yyline + 1 , yycolumn + 1  );}
@@ -42,13 +42,25 @@ IGUAL = "="
 {STRING} { return new Symbol( sym.STRING, yyline + 1 , yycolumn + 1  );}
 {BOOL} { return new Symbol( sym.BOOL, yyline + 1 , yycolumn + 1  );}
 {KEYWORD}  { return new Symbol( sym.KEYWORD, yyline + 1 , yycolumn + 1  ) ;  }
+{OP_COMP}	 {return new Symbol( sym.OP_COMP , yyline + 1 , yycolumn + 1  ) ;}
 
-/*Usados actualmente*/
+/*--Tokens usados actualmente--*/
+
+/*Control de flujo*/
+if	{ return new Symbol( sym.IF,yyline+1,yycolumn+1);} 
+else	{ return new Symbol( sym.ELSE,yyline+1,yycolumn+1);} 
+then	{ return new Symbol( sym.THEN,yyline+1,yycolumn+1);} 
+while	{ return new Symbol( sym.WHILE,yyline+1,yycolumn+1);} 
+do	{ return new Symbol( sym.DO,yyline+1,yycolumn+1);} 
+
+/*Declaraciones*/
 {TIPO}  { return new Symbol( sym.TIPO,yyline+1,yycolumn+1) ;  }
 {ID}    { return new Symbol( sym.ID,yyline+1,yycolumn+1) ;  }
 ";"   	{ return new Symbol( sym.END,yyline+1,yycolumn+1) ;  }
 "," 	{ return new Symbol( sym.COMA,yyline+1,yycolumn+1) ;  }
 ":"		{ return new Symbol( sym.DOSPUN,yyline+1,yycolumn+1) ;}
+
+/*Delimitadores*/
 "("		{ return new Symbol( sym.PAR_AB,yyline+1,yycolumn+1);} 
 ")"		{ return new Symbol( sym.PAR_CER,yyline+1,yycolumn+1);} 
 "{"		{ return new Symbol( sym.LLAV_AB,yyline+1,yycolumn+1);} 
@@ -56,10 +68,12 @@ IGUAL = "="
 "["		{ return new Symbol( sym.COR_AB,yyline+1,yycolumn+1);} 
 "]"		{ return new Symbol( sym.COR_CER,yyline+1,yycolumn+1);} 
 
+/*Para Atribuciones*/
+"="		 {return new Symbol( sym.IGUAL , yyline + 1 , yycolumn + 1  ) ;}
 {OP_UNARIO}	 {return new Symbol( sym.OP_UNARIO , yyline + 1 , yycolumn + 1  ) ;}
-{OP_BINARIO} {return new Symbol( sym.OP_BINARIO , yyline + 1 , yycolumn + 1 ) ;}
-{IGUAL}		 {return new Symbol( sym.IGUAL , yyline + 1 , yycolumn + 1  ) ;}
-{OP_COMP}	 {return new Symbol( sym.OP_COMP , yyline + 1 , yycolumn + 1  ) ;}
+{OP_BINARIO}	 {return new Symbol( sym.OP_BINARIO , yyline + 1 , yycolumn + 1  ) ;}
+
+
 
 /*Ignora los espacios y comentarios*/
 [ \n\t\r]
