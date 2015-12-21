@@ -11,7 +11,7 @@ public void syntax_error( Symbol s ){
 }
 
 public void unrecovered_syntax_error( Symbol s ) throws java.lang.Exception{
-	
+	System.out.println("ERROR SINTACTICO. El sistema no se pudo recuperar");
 }
 
 :}
@@ -35,7 +35,7 @@ non terminal expr,EXP,exprvec,expr_list,decl_var,decl_vec,decl_fun,ENCAB,BLOQUE;
 non terminal LISTA,LISTAV,VECT;
 non terminal COMANDOS,COMANDO_S,ATRIBUCIONES,ATRIBUCIONES1,EXPRESION;
 non terminal E,F;
-non terminal C_FLUJO_IF,C_FLUJO_ELSE,C_FLUJO_WHILE,C_FLUJO_DOWHILE,EXPR_F,EXPR_F1,COMP,COMP1;
+non terminal C_FLUJO_IF,C_FLUJO_ELSE,C_FLUJO_WHILE,C_FLUJO_DOWHILE,EXPR_F,EXPR_F1,COMP,VAL;
 non terminal OPR_IN,OPR_OUT,OPR_RTN,LLAM_F,LLAM_F1;
 
  
@@ -43,9 +43,9 @@ expr_list ::=   expr_list decl_var| decl_var |expr_list decl_vec| decl_vec
 				|expr_list decl_fun| decl_fun |error;
                  
 /*Declaracion de variables globales*/   
-   	decl_var ::=   expr END;
+   	decl_var ::=   expr END {: System.out.println("declaracion ok "); :} ;
    
-   	expr ::= TIPO DOSPUN LISTA {: System.out.println("declaracion ok "); :};
+   	expr ::= TIPO DOSPUN LISTA ;
 	LISTA ::= LISTA COMA ID
          | ID;
    
@@ -82,7 +82,8 @@ expr_list ::=   expr_list decl_var| decl_var |expr_list decl_vec| decl_vec
  				|LLAM_F
  				|C_FLUJO_IF
  				|C_FLUJO_WHILE
- 				|C_FLUJO_DOWHILE;  			 				
+ 				|C_FLUJO_DOWHILE
+ 				|error;  			 				
  
  /*Declaraciones de Atribuciones */
  ATRIBUCIONES ::= ID ATRIBUCIONES1| ID COR_AB ENTERO COR_CER ATRIBUCIONES1;
@@ -91,11 +92,11 @@ expr_list ::=   expr_list decl_var| decl_var |expr_list decl_vec| decl_vec
  /*Operaciones de entrada, salida y retorno. LLamada a funciones*/
  OPR_IN ::= INPUT ID END {: System.out.println("INPUT ok"); :};
  OPR_OUT ::= OUTPUT STRING END {: System.out.println("OUTPUT ok"); :};
- OPR_RTN ::= RETURN COMP1 END {: System.out.println("RETURN ok"); :};
+ OPR_RTN ::= RETURN VAL END {: System.out.println("RETURN ok"); :};
  LLAM_F ::= ID PAR_AB LLAM_F1 PAR_CER END {: System.out.println("llamada a funcion con parametros"); :} 
  			|ID PAR_AB PAR_CER END {: System.out.println("llamada a funcion vacia"); :} ;
- LLAM_F1 ::= LLAM_F1 COMA COMP1 |COMP1;
- 
+ LLAM_F1 ::= LLAM_F1 COMA VAL |VAL;
+	
  /*Declaracion de Expresiones para Operaciones aritmeticas*/
  EXPRESION ::= ID OP_UNARIO|E;
  E ::= E OP_BINARIO F|F;
@@ -111,8 +112,8 @@ expr_list ::=   expr_list decl_var| decl_var |expr_list decl_vec| decl_vec
 /*Declaracion de Expresiones para Operaciones logicas*/
 	EXPR_F ::= EXPR_F1|ID;
 	EXPR_F1 ::= EXPR_F1 OP_COMP_L COMP|COMP;
-	COMP ::= COMP1 OP_COMP COMP1;
-	COMP1 ::= ID
+	COMP ::= VAL OP_COMP VAL;
+	VAL ::= ID
 			|ENTERO
 			|FLOTANTE
 			|CARACTER

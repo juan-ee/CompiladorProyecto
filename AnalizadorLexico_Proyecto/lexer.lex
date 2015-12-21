@@ -15,7 +15,7 @@ import java_cup.runtime.*;
 
 TIPO = int|float|char|String|bool
 
-CARACT_ESP = ">"|"<"|"!"|"&"|"$"
+CARACT_ESP = "!"|"&"|"$"
 
 
 ID = [a-z][_a-zA-Z0-9]*
@@ -28,7 +28,7 @@ COMENT_1 = "//".*
 COMENT_M = "/*"[^"*/"]*"*/"
 OP_UNARIO = "++"|"--"
 OP_BINARIO = "+"|"-"|"*"|"/"
-OP_COMP = ">="|"<="|"!="|"=="
+OP_COMP = ">"|"<"|">="|"<="|"!="|"=="
 OP_COMP_L = "&&" | "||"
 
 %%
@@ -88,4 +88,4 @@ do	{ return new Symbol( sym.DO,yyline+1,yycolumn+1);}
 
 /*Errores Lexicos*/
 [^ \n\t\r] {	System.out.println("ERROR LEXICO: Token '"+yytext()+"' no identificado. Linea: "+
-									(yyline+1)+", columna: "+(yycolumn+1)); }
+									(yyline+1)+", columna: "+(yycolumn)); }

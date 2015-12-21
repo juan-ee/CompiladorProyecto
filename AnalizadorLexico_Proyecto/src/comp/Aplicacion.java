@@ -5,10 +5,11 @@ import java.io.*;
 public class Aplicacion {
 
 	public static void main(String[] args) {
-		 try {	            
-	            AnalizadorLexico lexer = new AnalizadorLexico( new FileReader("entrada.txt") );	            
+		 try {	
+			 int a,d,c;
+	            AnalizadorLexico lexer = new AnalizadorLexico( new FileReader("entrada.c") );	            
 	            AnalizadorSintactico p = new AnalizadorSintactico(lexer);	            
-	            p.parse();	     
+	            p.parse();	   
 	        } catch (Exception e) {
 	            // TODO: Add catch code
 	            e.printStackTrace();
