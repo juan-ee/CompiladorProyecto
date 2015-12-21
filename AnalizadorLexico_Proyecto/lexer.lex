@@ -13,8 +13,6 @@ import java_cup.runtime.*;
 %line
 %column
 
-
-KEYWORD = input|output|return
 TIPO = int|float|char|String|bool
 
 CARACT_ESP = ">"|"<"|"!"|"&"|"$"
@@ -30,28 +28,36 @@ COMENT_1 = "//".*
 COMENT_M = "/*"[^"*/"]*"*/"
 OP_UNARIO = "++"|"--"
 OP_BINARIO = "+"|"-"|"*"|"/"
-OP_COMP = ">="|"<="|"!="|"&&"|"||"|"=="
+OP_COMP = ">="|"<="|"!="|"=="
+OP_COMP_L = "&&" | "||"
 
 %%
 
 /*--Tokens sin usar todavia--*/
 {CARACT_ESP} { return new Symbol( sym.CARACT_ESP, yyline + 1 , yycolumn + 1  );}
-{ENTERO} { return new Symbol( sym.ENTERO, yyline + 1 , yycolumn + 1  );}
-{FLOTANTE} { return new Symbol( sym.FLOTANTE, yyline + 1 , yycolumn + 1  );}
-{CARACTER} { return new Symbol( sym.CARACTER, yyline + 1 , yycolumn + 1  );}
-{STRING} { return new Symbol( sym.STRING, yyline + 1 , yycolumn + 1  );}
-{BOOL} { return new Symbol( sym.BOOL, yyline + 1 , yycolumn + 1  );}
-{KEYWORD}  { return new Symbol( sym.KEYWORD, yyline + 1 , yycolumn + 1  ) ;  }
-{OP_COMP}	 {return new Symbol( sym.OP_COMP , yyline + 1 , yycolumn + 1  ) ;}
+
+
 
 /*--Tokens usados actualmente--*/
+
+ /*Operaciones de entrada, salida y retorno*/
+ input { return new Symbol( sym.INPUT,yyline+1,yycolumn+1);}
+ output { return new Symbol( sym.OUTPUT,yyline+1,yycolumn+1);}
+ return { return new Symbol( sym.RETURN,yyline+1,yycolumn+1);}
+{STRING} { return new Symbol( sym.STRING, yyline + 1 , yycolumn + 1  );}
 
 /*Control de flujo*/
 if	{ return new Symbol( sym.IF,yyline+1,yycolumn+1);} 
 else	{ return new Symbol( sym.ELSE,yyline+1,yycolumn+1);} 
 then	{ return new Symbol( sym.THEN,yyline+1,yycolumn+1);} 
 while	{ return new Symbol( sym.WHILE,yyline+1,yycolumn+1);} 
-do	{ return new Symbol( sym.DO,yyline+1,yycolumn+1);} 
+do	{ return new Symbol( sym.DO,yyline+1,yycolumn+1);}
+{OP_COMP}	 {return new Symbol( sym.OP_COMP , yyline + 1 , yycolumn + 1  ) ;}
+{OP_COMP_L}	 {return new Symbol( sym.OP_COMP_L , yyline + 1 , yycolumn + 1  ) ;}
+{ENTERO} { return new Symbol( sym.ENTERO, yyline + 1 , yycolumn + 1  );}
+{FLOTANTE} { return new Symbol( sym.FLOTANTE, yyline + 1 , yycolumn + 1  );}
+{CARACTER} { return new Symbol( sym.CARACTER, yyline + 1 , yycolumn + 1  );}
+{BOOL} { return new Symbol( sym.BOOL, yyline + 1 , yycolumn + 1  );}
 
 /*Declaraciones*/
 {TIPO}  { return new Symbol( sym.TIPO,yyline+1,yycolumn+1) ;  }
@@ -81,5 +87,5 @@ do	{ return new Symbol( sym.DO,yyline+1,yycolumn+1);}
 | {COMENT_M} {}
 
 /*Errores Lexicos*/
-[^ \n\t\r] {	System.out.println("ERROR: Token no identificado --> "+yytext()+" en la linea: "+
+[^ \n\t\r] {	System.out.println("ERROR LEXICO: Token '"+yytext()+"' no identificado. Linea: "+
 									(yyline+1)+", columna: "+(yycolumn+1)); }

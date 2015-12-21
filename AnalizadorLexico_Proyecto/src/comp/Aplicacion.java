@@ -8,8 +8,7 @@ public class Aplicacion {
 		 try {	            
 	            AnalizadorLexico lexer = new AnalizadorLexico( new FileReader("entrada.txt") );	            
 	            AnalizadorSintactico p = new AnalizadorSintactico(lexer);	            
-	            p.parse();
-	            
+	            p.parse();	     
 	        } catch (Exception e) {
 	            // TODO: Add catch code
 	            e.printStackTrace();
