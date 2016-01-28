@@ -19,7 +19,31 @@ action code
 {:
 	Programa programa=new Programa();
 	int tipo;
-	int funcion=-1;		
+	int funcion=-1;
+	
+	public void buscar_id(String id,int func,int linea){
+		int aux=programa.buscarID(id,func);
+		if(aux==-1){
+			System.out.println("ERROR en linea:"+linea+". El identificador \""+id+"\" no ha sido declarado");
+		}else{
+			tipo=aux;
+		}
+	}
+	
+	public void buscar_v(String id,int tamano,int linea){
+		int aux=programa.buscar_vectores(id);
+		if(aux==-1){
+			System.out.println("ERROR en linea:"+linea+". El arreglo \""+id+"\" no ha sido declarado");
+		}else{
+			DeclaracionVector vect_aux=programa.vectores.get(aux);
+			tipo=vect_aux.tipo;			
+			if(vect_aux.tamano<=tamano){
+				System.out.println("ERROR en linea:"+linea+". Se ha excedido el tamano del arreglo \""+id+"\".");
+			}
+		}
+	}
+	
+	
 :}
 
 
@@ -38,10 +62,15 @@ terminal String ID;
 terminal COMA,DOSPUN,END;
 terminal int CHAR,INT,FLOAT,STRING,BOOL,VOID;
 
-non terminal PROGRAMA, DECLARACIONES;
+non terminal PROGRAMA, DECLARACIONES, FUNCIONES;
 non terminal TIPO,DEC_G,DEC_G1,DEC_V,DEC_V1;
+non terminal FUNCION,FUNC,ENCAB,ENCAB1;
+non terminal BLOQUE,DEC_L,DEC_L1,DEC_L2,COMANDOS,COMANDOS1;
+non terminal ATRIBUCIONES,ATRIBUCIONES1;
+non terminal EXPRESION,E,F,VAL;
 
-PROGRAMA ::= DECLARACIONES ;
+
+PROGRAMA ::= DECLARACIONES FUNCIONES;
 
 /*----DECLARACIONES GLOBALES----*/
 
@@ -63,5 +92,46 @@ TIPO ::= INT:r {: tipo=r; :}
 		| CHAR:r {: tipo=r;:} 
 		| BOOL:r {: tipo=r;:}  
 		| STRING:r {: tipo=r;:};
+				
+		
+/*----FUNCIONES----*/
+FUNCIONES::= FUNCIONES FUNCION|FUNCION|error;
+
+FUNCION::=FUNC BLOQUE;
+/*Declaracion de funcion*/
+FUNC::= TIPO DOSPUN ID:r {:programa.funciones.add(new Funcion(tipo, r)); funcion++; :} PAR_AB ENCAB
+	|	VOID DOSPUN ID:r {:programa.funciones.add(new Funcion(sym.VOID, r)); funcion++; :} PAR_AB ENCAB;
+
+/*Encabezado*/
+ENCAB ::= PAR_CER
+		| TIPO DOSPUN ID:r {: programa.funciones.get(funcion).insertar_vparam(tipo, r, rleft);:}  ENCAB1 PAR_CER  ;		
+ENCAB1::= COMA TIPO DOSPUN ID:r {: programa.funciones.get(funcion).insertar_vparam(tipo, r, rleft);:} ENCAB1 |;
 
 
+/*--BLOQUE--*/
+
+BLOQUE::= LLAV_AB DEC_L COMANDOS LLAV_CER|error;
+
+/*Declaracion variables locales*/
+DEC_L::=DEC_L DEC_L1|DEC_L1|error;
+DEC_L1::= TIPO DOSPUN DEC_L2;
+DEC_L2::= ID:r END {: programa.funciones.get(funcion).insertar_vlocales(tipo, r, rleft); :}
+		| ID:r COMA DEC_L2 {:programa.funciones.get(funcion).insertar_vlocales(tipo, r, rleft);:} ;
+
+/*PROGRAMACION QUE SE USARA EN EL BLOQUE*/		
+COMANDOS ::= COMANDOS ATRIBUCIONES|ATRIBUCIONES|error;
+
+/*Para las atribuciones*/
+ATRIBUCIONES::= ID:r {: buscar_id(r,funcion,rleft);:} ATRIBUCIONES1
+				|ID:r1 COR_AB ENTERO:r2 COR_CER {: buscar_v(r1,(int)r2,r1left); :} ATRIBUCIONES1;
+
+ATRIBUCIONES1 ::= OP_UNARIO END
+				| IGUAL EXPRESION END;
+
+/*Expresiones matematicas*/
+EXPRESION ::= ID:r OP_UNARIO {:  :}
+			|E;
+ E ::= E OP_BINARIO F|F;
+ F ::= PAR_AB E PAR_CER| ID|ENTERO;
+
+/*Valores*/

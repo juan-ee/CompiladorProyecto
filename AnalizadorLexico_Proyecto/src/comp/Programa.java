@@ -5,13 +5,14 @@ import java.util.ArrayList;
 public class Programa {
 	ArrayList<DeclaracionVector> vectores; //Coleccion usada para los vectores globales
 	ArrayList<Declaracion> var_globales; //Coleccion usada para las variables globales
+	ArrayList<Funcion> funciones;
 	
-
+	
 	public Programa() {
 		super();
 		this.vectores = new ArrayList<>();
 		this.var_globales = new ArrayList<>();
-				
+		this.funciones=new ArrayList<>();
 	}
 	
 	//Metodo para buscar el inidice de alguna variable global declarada
@@ -60,7 +61,27 @@ public class Programa {
 			System.out.println("ERROR SEMANTICO en linea: "+linea+". La variable \""+id+"\" ya ha sido declarada anteriormente");
 		}		
 	}
-	
+	//Metodo para buscar un ID en todo el programa
+		public int buscarID(String id, int funcion){		
+			Funcion aux=funciones.get(funcion);
+			
+			int tipo=aux.buscar_vparam(id);
+			if(tipo==-1){
+				tipo=aux.buscar_vlocales(id);
+				if(tipo==-1){
+					tipo=buscar_vglobales(id);
+					if(tipo==-1){
+						return tipo;
+					}else{
+						return var_globales.get(tipo).tipo;
+					}
+				}else{
+					return aux.var_loc.get(tipo).tipo;
+				}
+			}else{
+				return aux.var_param.get(tipo).tipo;
+			}
+		}	
 	
 	
 	
