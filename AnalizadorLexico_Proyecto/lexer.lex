@@ -13,7 +13,7 @@ import java_cup.runtime.*;
 %line
 %column
 
-TIPO = int|float|char|String|bool
+
 
 CARACT_ESP = "!"|"&"|"$"
 
@@ -21,7 +21,7 @@ CARACT_ESP = "!"|"&"|"$"
 ID = [a-z][_a-zA-Z0-9]*
 ENTERO = -?[0-9]+
 FLOTANTE = {ENTERO}"."[0-9]+
-BOOL = true|false
+BOOLEANO = true|false
 CARACTER = '[^ \n\t]'
 STRING = \".+\"
 COMENT_1 = "//".*
@@ -44,27 +44,34 @@ OP_COMP_L = "&&" | "||"
  input { return new Symbol( sym.INPUT,yyline+1,yycolumn+1);}
  output { return new Symbol( sym.OUTPUT,yyline+1,yycolumn+1);}
  return { return new Symbol( sym.RETURN,yyline+1,yycolumn+1);}
-{STRING} { return new Symbol( sym.STRING, yyline + 1 , yycolumn + 1  );}
+{STRING} { return new Symbol( sym.CADENA, yyline + 1 , yycolumn + 1  );}
 
 /*Control de flujo*/
 if	{ return new Symbol( sym.IF,yyline+1,yycolumn+1);} 
 else	{ return new Symbol( sym.ELSE,yyline+1,yycolumn+1);} 
 then	{ return new Symbol( sym.THEN,yyline+1,yycolumn+1);} 
-while	{ return new Symbol( sym.WHILE,yyline+1,yycolumn+1);} 
+while	{ return new Symbol( sym.WHILE,yyline+1,yycolumn+1);}
+
 do	{ return new Symbol( sym.DO,yyline+1,yycolumn+1);}
 {OP_COMP}	 {return new Symbol( sym.OP_COMP , yyline + 1 , yycolumn + 1  ) ;}
 {OP_COMP_L}	 {return new Symbol( sym.OP_COMP_L , yyline + 1 , yycolumn + 1  ) ;}
-{ENTERO} { return new Symbol( sym.ENTERO, yyline + 1 , yycolumn + 1  );}
+{ENTERO} { return new Symbol( sym.ENTERO, yyline + 1 , yycolumn + 1 , Integer.parseInt(yytext()) );}
 {FLOTANTE} { return new Symbol( sym.FLOTANTE, yyline + 1 , yycolumn + 1  );}
 {CARACTER} { return new Symbol( sym.CARACTER, yyline + 1 , yycolumn + 1  );}
-{BOOL} { return new Symbol( sym.BOOL, yyline + 1 , yycolumn + 1  );}
+{BOOLEANO} { return new Symbol( sym.BOOLEANO, yyline + 1 , yycolumn + 1  );}
 
-/*Declaraciones*/
-{TIPO}  { return new Symbol( sym.TIPO,yyline+1,yycolumn+1) ;  }
-{ID}    { return new Symbol( sym.ID,yyline+1,yycolumn+1) ;  }
+/*Para declaraciones*/
+int  { return new Symbol( sym.INT,yyline+1,yycolumn+1,sym.INT) ;  }
+float { return new Symbol( sym.FLOAT,yyline+1,yycolumn+1,sym.FLOAT) ;  }
+char { return new Symbol( sym.CHAR,yyline+1,yycolumn+1,sym.CHAR) ;  }
+bool { return new Symbol( sym.BOOL,yyline+1,yycolumn+1,sym.BOOL) ;  }
+String { return new Symbol( sym.STRING,yyline+1,yycolumn+1,sym.STRING) ;  }
+void { return new Symbol( sym.VOID,yyline+1,yycolumn+1,sym.VOID) ;  }
+
+{ID}    { return new Symbol( sym.ID,yyline+1,yycolumn+1,new String(yytext())) ;  }
 ";"   	{ return new Symbol( sym.END,yyline+1,yycolumn+1) ;  }
-"," 	{ return new Symbol( sym.COMA,yyline+1,yycolumn+1) ;  }
-":"		{ return new Symbol( sym.DOSPUN,yyline+1,yycolumn+1) ;}
+"," 	{ return new Symbol( sym.COMA,yyline+1,yycolumn+1) ; }
+":"		{ return new Symbol( sym.DOSPUN,yyline+1,yycolumn+1 ) ;}
 
 /*Delimitadores*/
 "("		{ return new Symbol( sym.PAR_AB,yyline+1,yycolumn+1);} 
@@ -82,9 +89,10 @@ do	{ return new Symbol( sym.DO,yyline+1,yycolumn+1);}
 
 
 /*Ignora los espacios y comentarios*/
-[ \n\t\r]
+[ \t\n\r]
 | {COMENT_1}
 | {COMENT_M} {}
+
 
 /*Errores Lexicos*/
 [^ \n\t\r] {	System.out.println("ERROR LEXICO: Token '"+yytext()+"' no identificado. Linea: "+
