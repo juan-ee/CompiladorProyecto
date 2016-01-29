@@ -18,9 +18,11 @@ public void unrecovered_syntax_error( Symbol s ) throws java.lang.Exception{
 action code
 {:
 	Programa programa=new Programa();
-	int tipo,valor;
-	int funcion=-1;
+	int tipo,valor,param;
+	int funcion=-1;	
+	Funcion func_b;
 	
+	/*Buscamos algun vector*/
 	public void buscar_id(String id,int func,int linea){
 		int aux= programa.buscarID(id,func);
 		if(aux==-1){
@@ -29,7 +31,7 @@ action code
 			tipo=aux;
 		}
 	}
-	
+	/*Buscamos algun vector*/
 	public void buscar_v(String id,int tamano,int linea){
 		int aux=programa.buscar_vectores(id);
 		if(aux==-1){
@@ -43,6 +45,7 @@ action code
 		}
 	}
 	
+	/*Insertaremos una funcion cuando no se repita su id*/
 	public void insertar_funciones(String id,int linea){
 		if(programa.buscar_funcion(id)==-1){
 			programa.funciones.add(new Funcion(tipo, id));
@@ -53,6 +56,7 @@ action code
 		
 		
 	}
+	/*Buscamos si existe un ID cuando se hacen atribuciones. Comprobamos la induccion y la inferencia */
 	public void buscar_id_atrib(String id,int func,int linea){
 		int aux= programa.buscarID(id,func);			
 		if(aux==-1){
@@ -79,7 +83,7 @@ action code
 			}
 		}
 	}
-	
+	/*Verificamos si algun dato coincide con su tipo*/
 	public void verificar_valor(int linea, int columna){
 		switch(valor){
 		case sym.INT:
@@ -110,12 +114,72 @@ action code
 		
 		}
 	}
-	
-	public void verif_funcion(int ind,int linea){
+	/*Verificamos si una funcion es void*/
+	public void verif_funcion1(int ind,int linea){
 		if(programa.funciones.get(ind).var_param.isEmpty()){
 			System.out.println("ERROR. en linea:"+linea+". La funcion es de tipo void y no debe retornar nada.");
 		}
 	}
+	/*Verificamos si una funcion es de cualquier tipo*/
+	public void verif_funcion2(int ind){
+		Funcion aux=programa.funciones.get(ind);
+		if(aux.tipo!=sym.VOID){
+			System.out.println("Funcion tipo:"+aux.tipo);
+			System.out.println("ERROR. La funcion "+aux.id+ "() debe retornar un tipo de valor");
+		}
+	}
+	
+	/*Buscamos si existe una funcion*/
+	public void buscar_func(String id,int linea){
+		int aux=programa.buscar_funcion(id);
+		if(aux==-1){			
+			System.out.println("ERROR en linea:"+linea+". La funcion \""+id+"()\" no existe.");
+			func_b=null;
+		}else{
+			func_b=programa.funciones.get(aux);
+			param=0;
+		}	
+	}
+	
+	/*Vemos si la funcion vacia que llamamos tiene parametros*/
+	public void llamar1(int linea){
+		 if(func_b!=null){
+			 if(func_b.var_param.size()!=param){
+				 System.out.println("ERROR. En linea: "+linea+". La funcion \""+func_b.id+"()\" recibe parametros.");
+			 }
+		 }
+	 }	
+	 
+	/*Meotodo para ver si coinciden los parametros con los ids de una funcion buscada*/
+	public void llamar2(String id,int linea){
+		 if(func_b!=null){
+			 if(param==func_b.var_param.size()){
+				 System.out.println("ERROR. En linea: "+linea+". La funcion \""+func_b.id+"()\" no recibe tantos parametros");
+			 }else{
+				 buscar_id(id,funcion,linea);
+				 if(tipo!=func_b.var_param.get(param).tipo){
+					 System.out.println("ERROR. En linea: "+linea+". El identificador \""+id+"\" no corresponde al mismo tipo que recibe la funcion");
+				 }
+				 param++;
+			 }
+		 }
+	 }
+
+	public void llamar3(int linea){
+		if(func_b!=null){
+			 if(param==func_b.var_param.size()){
+				 System.out.println("ERROR. En linea: "+linea+". La funcion \""+func_b.id+"()\" no recibe tantos parametros");
+			 }else{				 
+				 if(valor!=func_b.var_param.get(param).tipo){
+					 System.out.println("ERROR. En linea: "+linea+". El tipo de dato en el parametro "+(param+1)+" no corresponde al mismo que recibe la funcion.");
+				 }
+				 param++;
+			 }
+		}
+			
+	}
+	
+	 
 	
 :}
 
@@ -141,10 +205,10 @@ non terminal FUNCION,FUNC,ENCAB,ENCAB1;
 non terminal BLOQUE,BLOQUE1,DEC_L,DEC_L1,DEC_L2,COMANDOS,COMANDOS1;
 non terminal ATRIBUCIONES,ATRIBUCIONES1;
 non terminal EXPRESION,E,F,VAL;
-non terminal OPR_IN,OPR_OUT;
+non terminal OPR_IN,OPR_OUT,OPR_RTN,OPR_RTN1;
 non terminal C_FLUJO_IF,C_FLUJO_ELSE,C_FLUJO_WHILE,C_FLUJO_DOWHILE;
 non terminal EXPR_F,EXPR_F1,COMP,COMP1,COMP2;
-
+non terminal LLAM_F,LLAM_F1;
 
 PROGRAMA ::= DECLARACIONES FUNCIONES;
 
@@ -176,7 +240,7 @@ FUNCIONES::= FUNCIONES FUNCION|FUNCION|error;
 FUNCION::=FUNC BLOQUE;
 /*Declaracion de funcion*/
 FUNC::= TIPO DOSPUN ID:r {: insertar_funciones(r,rleft);:} PAR_AB ENCAB
-	|	VOID DOSPUN ID:r {:insertar_funciones(r,rleft); :} PAR_AB ENCAB;
+	|	VOID DOSPUN ID:r {:tipo=sym.VOID; insertar_funciones(r,rleft); :} PAR_AB ENCAB;
 
 /*Encabezado*/
 ENCAB ::= PAR_CER 
@@ -186,7 +250,7 @@ ENCAB1::= COMA TIPO DOSPUN ID:r {: programa.funciones.get(funcion).insertar_vpar
 
 /*--BLOQUE--*/
 
-BLOQUE::= LLAV_AB DEC_L COMANDOS LLAV_CER | BLOQUE1;
+BLOQUE::= LLAV_AB DEC_L COMANDOS OPR_RTN LLAV_CER | BLOQUE1;
 BLOQUE1::= LLAV_AB COMANDOS LLAV_CER |LLAV_AB LLAV_CER;
 
 /*Declaracion variables locales*/
@@ -203,11 +267,12 @@ COMANDOS1 ::= ATRIBUCIONES
  			| C_FLUJO_IF
  			| C_FLUJO_WHILE
  			| C_FLUJO_DOWHILE
+			| LLAM_F
  			| error END
  			| error LLAV_CER; 		
 
 /*Para las atribuciones*/
-ATRIBUCIONES::= ID:r {: buscar_id(r,funcion,rleft);:} ATRIBUCIONES1
+ATRIBUCIONES::= ID:r {: buscar_id(r,funcion,rleft); :} ATRIBUCIONES1
 				|ID:r1 COR_AB ENTERO:r2 COR_CER {: buscar_v(r1,(int)r2,r1left); :} ATRIBUCIONES1;
 
 ATRIBUCIONES1 ::= OP_UNARIO END
@@ -232,7 +297,18 @@ VAL::=CADENA {: valor=sym.STRING; :}
 /*Operaciones de entrada y salida*/
 OPR_IN ::= INPUT ID:r END {: buscar_id(r,funcion,rleft); :};
 OPR_OUT ::= OUTPUT CADENA END;
-
+OPR_RTN ::= RETURN:r OPR_RTN1 {:verif_funcion1(funcion,rleft);:}
+		|  {:verif_funcion2(funcion);:};
+OPR_RTN1 ::=ID:r END {: buscar_id(r,funcion,rleft);
+						if(tipo!=programa.funciones.get(funcion).tipo){
+							System.out.println("ERROR. En linea:"+rleft+". La variable que se quiere retornar es de diferente tipo al de la funcion"); 
+						} 
+					 :}
+		   |VAL:r END {:
+						if(valor!=programa.funciones.get(funcion).tipo){
+							System.out.println("ERROR. En linea:"+rleft+". El dato que se quiere retornar es de diferente tipo al de la funcion"); 
+						}
+					:};
 
 /*Comandos de control de flujo*/			
 	C_FLUJO_IF ::= IF PAR_AB EXPR_F PAR_CER THEN BLOQUE1 C_FLUJO_ELSE ;
@@ -256,3 +332,12 @@ COMP2::= ID:r{:
 			}
 		:}
 		|VAL;
+
+/*LLamada a funciones*/
+ LLAM_F ::= ID:r PAR_AB {: buscar_func(r,rleft); :} LLAM_F1 PAR_CER END {: param=0; :} 
+ 		|	ID:r PAR_AB PAR_CER END {: buscar_func(r,rleft);llamar1(rleft);:} ;
+ 
+ LLAM_F1::= ID:r {: llamar2(r,rleft); :}
+		|	ID:r COMA {: llamar2(r,rleft); :} LLAM_F1
+		|	VAL:r {: llamar3(rleft); :}
+		|	VAL:r COMA {: llamar3(rleft); :} LLAM_F1;

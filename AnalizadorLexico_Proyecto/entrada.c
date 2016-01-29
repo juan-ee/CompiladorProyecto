@@ -1,7 +1,7 @@
 float:b[21];
 int: c,s,f,j,kl,asd,d;
 
-float: lalala(int:a, bool:b){
+float: lalala(bool:a, float:b){
 			
 	int:aas;
 	b[20]=aas;
@@ -12,20 +12,27 @@ float: lalala(int:a, bool:b){
 	d=c+5;
 	output "Hola Mundo";
 	
-	if (a == c)
+	if (a == true)
 	then{
 		a=b+c;
 	}
 	
 	do{		
-		while(a != 8||b == true)
+		while(a != true ||b == 0.5)
 		do{
 			b=a++;
-			if (a == c)
+			if (a == false)
 			then{
 				
 			}
 		}
-	}while (b == false);
+	}while (b == 3.6);
+	return 6.5;
+}
+
+void: hola(bool:a){
+	float:c;
+	lalala(a,c);
+	hola(false);
 	
 }
