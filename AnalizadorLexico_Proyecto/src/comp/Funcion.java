@@ -16,7 +16,7 @@ public class Funcion {
 		this.var_loc = new ArrayList<>();
 	}
 	
-	public int buscar_vparam(String id){
+	public int buscar_vparam(String id){		
 		for (Declaracion x:var_param){
 			if(x.id.equals(id)){
 				return var_param.indexOf(x);

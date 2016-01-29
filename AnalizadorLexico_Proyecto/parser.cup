@@ -18,11 +18,11 @@ public void unrecovered_syntax_error( Symbol s ) throws java.lang.Exception{
 action code
 {:
 	Programa programa=new Programa();
-	int tipo;
+	int tipo,valor;
 	int funcion=-1;
 	
 	public void buscar_id(String id,int func,int linea){
-		int aux=programa.buscarID(id,func);
+		int aux= programa.buscarID(id,func);
 		if(aux==-1){
 			System.out.println("ERROR en linea:"+linea+". El identificador \""+id+"\" no ha sido declarado");
 		}else{
@@ -43,6 +43,79 @@ action code
 		}
 	}
 	
+	public void insertar_funciones(String id,int linea){
+		if(programa.buscar_funcion(id)==-1){
+			programa.funciones.add(new Funcion(tipo, id));
+			funcion++;
+		}else{
+			System.out.println("ERROR en linea:"+linea+". La funcion \""+id+"()\" ya ha sido declarada antes");
+		}
+		
+		
+	}
+	public void buscar_id_atrib(String id,int func,int linea){
+		int aux= programa.buscarID(id,func);			
+		if(aux==-1){
+			System.out.println("ERROR en linea:"+linea+". El identificador \""+id+"\" no ha sido declarado");
+		}else{			
+			if(tipo==sym.INT||tipo==sym.FLOAT||tipo==sym.BOOL){				
+				if(aux==sym.STRING){
+					System.out.println("ERROR en linea:"+linea+", identificador \""+id+"\". No hay induccion para variables de tipo String.");
+				}else{
+					if(aux==sym.CHAR){					
+						System.out.println("ERROR en linea:"+linea+", identificador \""+id+"\". No hay induccion para variables de tipo char.");					
+					}
+				}
+			}else{
+				if(tipo==sym.STRING){
+					if(aux!=sym.STRING){
+						System.out.println("ERROR en linea:"+linea+". El identificador \""+id+"\" no es de tipo String.");
+					}
+				}else{
+					if(aux!=sym.CHAR){
+						System.out.println("ERROR en linea:"+linea+". El identificador \""+id+"\" no es de tipo char.");
+					}
+				}
+			}
+		}
+	}
+	
+	public void verificar_valor(int linea, int columna){
+		switch(valor){
+		case sym.INT:
+			if(tipo!=sym.INT){
+				System.out.println("ERROR en linea:"+linea+", columna:"+columna+". El valor que se asigna de tipo int es incompatible con el tipo de variable del identificador.");
+			}
+		break;
+		case sym.FLOAT:
+			if(tipo!=sym.FLOAT){
+				System.out.println("ERROR en linea:"+linea+", columna:"+columna+". El valor que se asigna de tipo float es incompatible con el tipo de variable del identificador.");
+			}
+		break;
+		case sym.BOOL:
+			if(tipo!=sym.BOOL){
+				System.out.println("ERROR en linea:"+linea+", columna:"+columna+". El valor que se asigna de tipo bool es incompatible con el tipo de variable del identificador.");
+			}
+		break;
+		case sym.CHAR:
+			if(tipo!=sym.CHAR){
+				System.out.println("ERROR en linea:"+linea+", columna:"+columna+". El valor que se asigna de tipo char es incompatible con el tipo de variable del identificador.");
+			}
+		break;
+		case sym.STRING:
+			if(tipo!=sym.STRING){
+				System.out.println("ERROR en linea:"+linea+", columna:"+columna+". El valor que se asigna de tipo String es incompatible con el tipo de variable del identificador.");	
+			}
+		break;
+		
+		}
+	}
+	
+	public void verif_funcion(int ind,int linea){
+		if(programa.funciones.get(ind).var_param.isEmpty()){
+			System.out.println("ERROR. en linea:"+linea+". La funcion es de tipo void y no debe retornar nada.");
+		}
+	}
 	
 :}
 
@@ -65,9 +138,12 @@ terminal int CHAR,INT,FLOAT,STRING,BOOL,VOID;
 non terminal PROGRAMA, DECLARACIONES, FUNCIONES;
 non terminal TIPO,DEC_G,DEC_G1,DEC_V,DEC_V1;
 non terminal FUNCION,FUNC,ENCAB,ENCAB1;
-non terminal BLOQUE,DEC_L,DEC_L1,DEC_L2,COMANDOS,COMANDOS1;
+non terminal BLOQUE,BLOQUE1,DEC_L,DEC_L1,DEC_L2,COMANDOS,COMANDOS1;
 non terminal ATRIBUCIONES,ATRIBUCIONES1;
 non terminal EXPRESION,E,F,VAL;
+non terminal OPR_IN,OPR_OUT;
+non terminal C_FLUJO_IF,C_FLUJO_ELSE,C_FLUJO_WHILE,C_FLUJO_DOWHILE;
+non terminal EXPR_F,EXPR_F1,COMP,COMP1,COMP2;
 
 
 PROGRAMA ::= DECLARACIONES FUNCIONES;
@@ -83,7 +159,7 @@ DEC_G1::= ID:r END {:programa.insertar_vglobales(tipo, r, rleft);:}
 		
 /*vectores*/		
 DEC_V::= TIPO DOSPUN DEC_V1;
-DEC_V1::= ID:r1 COR_AB ENTERO:r2 COR_CER END {:  programa.insertar_vectores(tipo,r1,(int) r2,r1left); :}
+DEC_V1::= ID:r1 COR_AB ENTERO:r2 COR_CER END {:  programa.insertar_vectores(tipo,r1,(int) r2,r1left);:}
 		| ID:r1 COR_AB ENTERO:r2 COR_CER COMA DEC_V1 {:  programa.insertar_vectores(tipo,r1,(int) r2,r1left); :};
 
 /*tipos*/		
@@ -99,27 +175,36 @@ FUNCIONES::= FUNCIONES FUNCION|FUNCION|error;
 
 FUNCION::=FUNC BLOQUE;
 /*Declaracion de funcion*/
-FUNC::= TIPO DOSPUN ID:r {:programa.funciones.add(new Funcion(tipo, r)); funcion++; :} PAR_AB ENCAB
-	|	VOID DOSPUN ID:r {:programa.funciones.add(new Funcion(sym.VOID, r)); funcion++; :} PAR_AB ENCAB;
+FUNC::= TIPO DOSPUN ID:r {: insertar_funciones(r,rleft);:} PAR_AB ENCAB
+	|	VOID DOSPUN ID:r {:insertar_funciones(r,rleft); :} PAR_AB ENCAB;
 
 /*Encabezado*/
-ENCAB ::= PAR_CER
-		| TIPO DOSPUN ID:r {: programa.funciones.get(funcion).insertar_vparam(tipo, r, rleft);:}  ENCAB1 PAR_CER  ;		
+ENCAB ::= PAR_CER 
+		| TIPO DOSPUN ID:r {: programa.funciones.get(funcion).insertar_vparam(tipo, r, rleft);:}  ENCAB1 PAR_CER ;		
 ENCAB1::= COMA TIPO DOSPUN ID:r {: programa.funciones.get(funcion).insertar_vparam(tipo, r, rleft);:} ENCAB1 |;
 
 
 /*--BLOQUE--*/
 
-BLOQUE::= LLAV_AB DEC_L COMANDOS LLAV_CER|error;
+BLOQUE::= LLAV_AB DEC_L COMANDOS LLAV_CER | BLOQUE1;
+BLOQUE1::= LLAV_AB COMANDOS LLAV_CER |LLAV_AB LLAV_CER;
 
 /*Declaracion variables locales*/
-DEC_L::=DEC_L DEC_L1|DEC_L1|error;
+DEC_L::=DEC_L DEC_L1|DEC_L1;
 DEC_L1::= TIPO DOSPUN DEC_L2;
 DEC_L2::= ID:r END {: programa.funciones.get(funcion).insertar_vlocales(tipo, r, rleft); :}
 		| ID:r COMA DEC_L2 {:programa.funciones.get(funcion).insertar_vlocales(tipo, r, rleft);:} ;
 
 /*PROGRAMACION QUE SE USARA EN EL BLOQUE*/		
-COMANDOS ::= COMANDOS ATRIBUCIONES|ATRIBUCIONES|error;
+COMANDOS ::= COMANDOS COMANDOS1|COMANDOS1;
+COMANDOS1 ::= ATRIBUCIONES
+			| OPR_IN
+ 			| OPR_OUT
+ 			| C_FLUJO_IF
+ 			| C_FLUJO_WHILE
+ 			| C_FLUJO_DOWHILE
+ 			| error END
+ 			| error LLAV_CER; 		
 
 /*Para las atribuciones*/
 ATRIBUCIONES::= ID:r {: buscar_id(r,funcion,rleft);:} ATRIBUCIONES1
@@ -129,9 +214,45 @@ ATRIBUCIONES1 ::= OP_UNARIO END
 				| IGUAL EXPRESION END;
 
 /*Expresiones matematicas*/
-EXPRESION ::= ID:r OP_UNARIO {:  :}
+EXPRESION ::= ID:r OP_UNARIO {: buscar_id_atrib(r,funcion,rleft); :}
 			|E;
  E ::= E OP_BINARIO F|F;
- F ::= PAR_AB E PAR_CER| ID|ENTERO;
+ F ::= PAR_AB E PAR_CER
+ | ID:r {: buscar_id_atrib(r,funcion,rleft); :}
+ | VAL:r {: verificar_valor(rleft,rright); :};
 
 /*Valores*/
+
+VAL::=CADENA {: valor=sym.STRING; :}
+	| ENTERO {: valor=sym.INT; :}
+	| FLOTANTE {: valor=sym.FLOAT; :}
+	| CARACTER {: valor=sym.CHAR; :}
+	| BOOLEANO {: valor=sym.BOOL; :} ;
+
+/*Operaciones de entrada y salida*/
+OPR_IN ::= INPUT ID:r END {: buscar_id(r,funcion,rleft); :};
+OPR_OUT ::= OUTPUT CADENA END;
+
+
+/*Comandos de control de flujo*/			
+	C_FLUJO_IF ::= IF PAR_AB EXPR_F PAR_CER THEN BLOQUE1 C_FLUJO_ELSE ;
+	C_FLUJO_ELSE ::= ELSE BLOQUE1|;
+	
+	C_FLUJO_DOWHILE ::= DO BLOQUE1 WHILE PAR_AB EXPR_F PAR_CER END;
+	C_FLUJO_WHILE ::= WHILE PAR_AB EXPR_F PAR_CER DO BLOQUE1;
+
+/*Declaracion de Expresiones para Operaciones logicas*/
+EXPR_F ::= EXPR_F1|ID;
+EXPR_F1 ::= EXPR_F1 OP_COMP_L COMP|COMP;
+COMP ::= COMP1 OP_COMP:r COMP2{: if(tipo!=valor){System.out.println("ERROR. en linea"+rleft+". Variables de tipo incompatible");} :};
+COMP1::= ID:r {: buscar_id(r,funcion,rleft); :}
+		|VAL {: tipo=valor; :};		
+COMP2::= ID:r{:
+			int aux=programa.buscarID(r,funcion);
+			if(aux==-1){
+				System.out.println("ERROR en linea:"+rleft+". El identificador \""+r+"\" no ha sido declarado");
+			}else{
+				valor=aux;
+			}
+		:}
+		|VAL;

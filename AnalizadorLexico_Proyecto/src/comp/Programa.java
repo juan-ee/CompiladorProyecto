@@ -61,6 +61,16 @@ public class Programa {
 			System.out.println("ERROR SEMANTICO en linea: "+linea+". La variable \""+id+"\" ya ha sido declarada anteriormente");
 		}		
 	}
+	
+	//Metodo para verificar si existe alguna funcion
+	
+	public int buscar_funcion(String id){
+		for(Funcion x:funciones){
+			if(x.id.equals(id)){
+				return funciones.indexOf(x);
+			}
+		} return -1;
+	}
 	//Metodo para buscar un ID en todo el programa
 		public int buscarID(String id, int funcion){		
 			Funcion aux=funciones.get(funcion);
