@@ -1,38 +1,18 @@
-float:b[21];
-int: c,s,f,j,kl,asd,d;
+int: a;
+float:b;
+int:hola;
+float:b1,acd;
 
-float: lalala(bool:a, float:b){
-			
-	int:aas;
-	b[20]=aas;
-	a=c/(s+f);
-	j=kl++;
-		
-	input asd;
-	d=c+5;
-	output "Hola Mundo";
-	
-	if (a == true)
-	then{
-		a=b+c;
-	}
-	
-	do{		
-		while(a != true ||b == 0.5)
-		do{
-			b=a++;
-			if (a == false)
-			then{
-				
-			}
-		}
-	}while (b == 3.6);
-	return 6.5;
+
+char:funcion(int:x,char:y){
+	String:c;
+	hola=acd+b;
+	return 'z';
 }
 
-void: hola(bool:a){
-	float:c;
-	lalala(a,c);
-	hola(false);
-	
+void:funcion2(){	
+	funcion(a,'a);	; @
 }
+
+//Induccion cuando se llama funciones
+//ver declaraciones para ids;

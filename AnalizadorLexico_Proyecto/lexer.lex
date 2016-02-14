@@ -13,7 +13,9 @@ import java_cup.runtime.*;
 %line
 %column
 
-
+%{
+	int errores=0;
+%}
 
 CARACT_ESP = "!"|"&"|"$"
 
@@ -96,4 +98,4 @@ void { return new Symbol( sym.VOID,yyline+1,yycolumn+1,sym.VOID) ;  }
 
 /*Errores Lexicos*/
 [^ \n\t\r] {	System.out.println("ERROR LEXICO: Token '"+yytext()+"' no identificado. Linea: "+
-									(yyline+1)+", columna: "+(yycolumn)); }
+									(yyline+1)+", columna: "+(yycolumn)); errores++;}

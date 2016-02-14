@@ -4,13 +4,16 @@ import java_cup.runtime.*;
 
 parser code
 {:
+int errores=0;
 
 public void syntax_error( Symbol s ){
 	System.out.println("ERROR SINTACTICO. Linea: " + s.left+", columna: " + s.right );
+	errores++;
 }
 
 public void unrecovered_syntax_error( Symbol s ) throws java.lang.Exception{
 	System.out.println("ERROR SINTACTICO. El sistema no se pudo recuperar, linea");
+	errores++;
 }
 
 :}
@@ -18,29 +21,31 @@ public void unrecovered_syntax_error( Symbol s ) throws java.lang.Exception{
 action code
 {:
 	Programa programa=new Programa();
-	int tipo,valor,param;
+	int tipo,valor,param,errores=0;
 	int funcion=-1;	
-	Funcion func_b;
+	Funcion func_b;	
 	
 	/*Buscamos algun vector*/
 	public void buscar_id(String id,int func,int linea){
 		int aux= programa.buscarID(id,func);
 		if(aux==-1){
 			System.out.println("ERROR en linea:"+linea+". El identificador \""+id+"\" no ha sido declarado");
-		}else{
-			tipo=aux;
+			errores++;					
 		}
+		tipo=aux;
 	}
 	/*Buscamos algun vector*/
 	public void buscar_v(String id,int tamano,int linea){
 		int aux=programa.buscar_vectores(id);
 		if(aux==-1){
 			System.out.println("ERROR en linea:"+linea+". El arreglo \""+id+"\" no ha sido declarado");
+			errores++;
 		}else{
 			DeclaracionVector vect_aux=programa.vectores.get(aux);
 			tipo=vect_aux.tipo;			
 			if(vect_aux.tamano<=tamano){
 				System.out.println("ERROR en linea:"+linea+". Se ha excedido el tamano del arreglo \""+id+"\".");
+				errores++;
 			}
 		}
 	}
@@ -52,6 +57,7 @@ action code
 			funcion++;
 		}else{
 			System.out.println("ERROR en linea:"+linea+". La funcion \""+id+"()\" ya ha sido declarada antes");
+			errores++;
 		}
 		
 		
@@ -61,54 +67,65 @@ action code
 		int aux= programa.buscarID(id,func);			
 		if(aux==-1){
 			System.out.println("ERROR en linea:"+linea+". El identificador \""+id+"\" no ha sido declarado");
+			errores++;
 		}else{			
 			if(tipo==sym.INT||tipo==sym.FLOAT||tipo==sym.BOOL){				
 				if(aux==sym.STRING){
 					System.out.println("ERROR en linea:"+linea+", identificador \""+id+"\". No hay induccion para variables de tipo String.");
+					errores++;
 				}else{
 					if(aux==sym.CHAR){					
-						System.out.println("ERROR en linea:"+linea+", identificador \""+id+"\". No hay induccion para variables de tipo char.");					
+						System.out.println("ERROR en linea:"+linea+", identificador \""+id+"\". No hay induccion para variables de tipo char.");
+						errores++;						
 					}
 				}
 			}else{
 				if(tipo==sym.STRING){
 					if(aux!=sym.STRING){
 						System.out.println("ERROR en linea:"+linea+". El identificador \""+id+"\" no es de tipo String.");
+						errores++;
 					}
 				}else{
 					if(aux!=sym.CHAR){
 						System.out.println("ERROR en linea:"+linea+". El identificador \""+id+"\" no es de tipo char.");
+						errores++;
 					}
 				}
 			}
 		}
 	}
+	
 	/*Verificamos si algun dato coincide con su tipo*/
 	public void verificar_valor(int linea, int columna){
 		switch(valor){
 		case sym.INT:
 			if(tipo!=sym.INT){
 				System.out.println("ERROR en linea:"+linea+", columna:"+columna+". El valor que se asigna de tipo int es incompatible con el tipo de variable del identificador.");
+				errores++;
 			}
 		break;
 		case sym.FLOAT:
 			if(tipo!=sym.FLOAT){
 				System.out.println("ERROR en linea:"+linea+", columna:"+columna+". El valor que se asigna de tipo float es incompatible con el tipo de variable del identificador.");
+				errores++;
 			}
 		break;
 		case sym.BOOL:
 			if(tipo!=sym.BOOL){
 				System.out.println("ERROR en linea:"+linea+", columna:"+columna+". El valor que se asigna de tipo bool es incompatible con el tipo de variable del identificador.");
+				errores++;
 			}
 		break;
 		case sym.CHAR:
 			if(tipo!=sym.CHAR){
 				System.out.println("ERROR en linea:"+linea+", columna:"+columna+". El valor que se asigna de tipo char es incompatible con el tipo de variable del identificador.");
+				errores++;
 			}
 		break;
 		case sym.STRING:
 			if(tipo!=sym.STRING){
 				System.out.println("ERROR en linea:"+linea+", columna:"+columna+". El valor que se asigna de tipo String es incompatible con el tipo de variable del identificador.");	
+				errores++;
 			}
 		break;
 		
@@ -118,14 +135,15 @@ action code
 	public void verif_funcion1(int ind,int linea){
 		if(programa.funciones.get(ind).var_param.isEmpty()){
 			System.out.println("ERROR. en linea:"+linea+". La funcion es de tipo void y no debe retornar nada.");
+			errores++;
 		}
 	}
 	/*Verificamos si una funcion es de cualquier tipo*/
 	public void verif_funcion2(int ind){
 		Funcion aux=programa.funciones.get(ind);
-		if(aux.tipo!=sym.VOID){
-			System.out.println("Funcion tipo:"+aux.tipo);
+		if(aux.tipo!=sym.VOID){			
 			System.out.println("ERROR. La funcion "+aux.id+ "() debe retornar un tipo de valor");
+			errores++;
 		}
 	}
 	
@@ -134,6 +152,7 @@ action code
 		int aux=programa.buscar_funcion(id);
 		if(aux==-1){			
 			System.out.println("ERROR en linea:"+linea+". La funcion \""+id+"()\" no existe.");
+			errores++;
 			func_b=null;
 		}else{
 			func_b=programa.funciones.get(aux);
@@ -146,6 +165,7 @@ action code
 		 if(func_b!=null){
 			 if(func_b.var_param.size()!=param){
 				 System.out.println("ERROR. En linea: "+linea+". La funcion \""+func_b.id+"()\" recibe parametros.");
+				 errores++;
 			 }
 		 }
 	 }	
@@ -155,10 +175,12 @@ action code
 		 if(func_b!=null){
 			 if(param==func_b.var_param.size()){
 				 System.out.println("ERROR. En linea: "+linea+". La funcion \""+func_b.id+"()\" no recibe tantos parametros");
+				 errores++;
 			 }else{
 				 buscar_id(id,funcion,linea);
 				 if(tipo!=func_b.var_param.get(param).tipo){
 					 System.out.println("ERROR. En linea: "+linea+". El identificador \""+id+"\" no corresponde al mismo tipo que recibe la funcion");
+					 errores++;
 				 }
 				 param++;
 			 }
@@ -169,9 +191,11 @@ action code
 		if(func_b!=null){
 			 if(param==func_b.var_param.size()){
 				 System.out.println("ERROR. En linea: "+linea+". La funcion \""+func_b.id+"()\" no recibe tantos parametros");
+				 errores++;
 			 }else{				 
 				 if(valor!=func_b.var_param.get(param).tipo){
 					 System.out.println("ERROR. En linea: "+linea+". El tipo de dato en el parametro "+(param+1)+" no corresponde al mismo que recibe la funcion.");
+					 errores++;
 				 }
 				 param++;
 			 }
@@ -214,7 +238,7 @@ PROGRAMA ::= DECLARACIONES FUNCIONES;
 
 /*----DECLARACIONES GLOBALES----*/
 
-DECLARACIONES::= DECLARACIONES DEC_G|DEC_G|DECLARACIONES DEC_V|DEC_V|error;
+DECLARACIONES::= DECLARACIONES DEC_G|DEC_G|DECLARACIONES DEC_V|DEC_V|error END;
 
 /*variables globales*/
 DEC_G::= TIPO DOSPUN DEC_G1;
@@ -279,11 +303,11 @@ ATRIBUCIONES1 ::= OP_UNARIO END
 				| IGUAL EXPRESION END;
 
 /*Expresiones matematicas*/
-EXPRESION ::= ID:r OP_UNARIO {: buscar_id_atrib(r,funcion,rleft); :}
+EXPRESION ::= ID:r OP_UNARIO {: if(tipo!=-1){buscar_id_atrib(r,funcion,rleft);} :}
 			|E;
  E ::= E OP_BINARIO F|F;
  F ::= PAR_AB E PAR_CER
- | ID:r {: buscar_id_atrib(r,funcion,rleft); :}
+ | ID:r {: if(tipo!=-1){buscar_id_atrib(r,funcion,rleft);} :}
  | VAL:r {: verificar_valor(rleft,rright); :};
 
 /*Valores*/
@@ -297,16 +321,18 @@ VAL::=CADENA {: valor=sym.STRING; :}
 /*Operaciones de entrada y salida*/
 OPR_IN ::= INPUT ID:r END {: buscar_id(r,funcion,rleft); :};
 OPR_OUT ::= OUTPUT CADENA END;
-OPR_RTN ::= RETURN:r OPR_RTN1 {:verif_funcion1(funcion,rleft);:}
-		|  {:verif_funcion2(funcion);:};
+OPR_RTN ::= RETURN:r OPR_RTN1 {:verif_funcion1(funcion,rleft);:}/*Verificamos si el valor de retorno corresponda con el tipo de funcion */
+		|  {:verif_funcion2(funcion);:};/*Verificamos si la funcion es void y no retorne nada*/
 OPR_RTN1 ::=ID:r END {: buscar_id(r,funcion,rleft);
 						if(tipo!=programa.funciones.get(funcion).tipo){
 							System.out.println("ERROR. En linea:"+rleft+". La variable que se quiere retornar es de diferente tipo al de la funcion"); 
+							errores++;
 						} 
 					 :}
 		   |VAL:r END {:
 						if(valor!=programa.funciones.get(funcion).tipo){
 							System.out.println("ERROR. En linea:"+rleft+". El dato que se quiere retornar es de diferente tipo al de la funcion"); 
+							errores++;
 						}
 					:};
 
@@ -320,13 +346,14 @@ OPR_RTN1 ::=ID:r END {: buscar_id(r,funcion,rleft);
 /*Declaracion de Expresiones para Operaciones logicas*/
 EXPR_F ::= EXPR_F1|ID;
 EXPR_F1 ::= EXPR_F1 OP_COMP_L COMP|COMP;
-COMP ::= COMP1 OP_COMP:r COMP2{: if(tipo!=valor){System.out.println("ERROR. en linea"+rleft+". Variables de tipo incompatible");} :};
+COMP ::= COMP1 OP_COMP:r COMP2{: if(tipo!=valor){System.out.println("ERROR. en linea"+rleft+". Variables de tipo incompatible");errores++;} :};
 COMP1::= ID:r {: buscar_id(r,funcion,rleft); :}
 		|VAL {: tipo=valor; :};		
 COMP2::= ID:r{:
 			int aux=programa.buscarID(r,funcion);
 			if(aux==-1){
 				System.out.println("ERROR en linea:"+rleft+". El identificador \""+r+"\" no ha sido declarado");
+				errores++;
 			}else{
 				valor=aux;
 			}
@@ -335,9 +362,11 @@ COMP2::= ID:r{:
 
 /*LLamada a funciones*/
  LLAM_F ::= ID:r PAR_AB {: buscar_func(r,rleft); :} LLAM_F1 PAR_CER END {: param=0; :} 
- 		|	ID:r PAR_AB PAR_CER END {: buscar_func(r,rleft);llamar1(rleft);:} ;
- 
+ 		|	ID:r PAR_AB PAR_CER END {: buscar_func(r,rleft);llamar1(rleft);:} ; /*verificamos si la funcion que vamos a llamar no tiene parametros*/
+		
+		/*verificamos si los tipos de identificadores corresponden a lo que recibe la funcion*/
  LLAM_F1::= ID:r {: llamar2(r,rleft); :}
 		|	ID:r COMA {: llamar2(r,rleft); :} LLAM_F1
+		/*verificamos si el tipo de datos corresponden a lo que recibe la funcion*/
 		|	VAL:r {: llamar3(rleft); :}
 		|	VAL:r COMA {: llamar3(rleft); :} LLAM_F1;
