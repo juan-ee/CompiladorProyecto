@@ -11,7 +11,7 @@ char:funcion(int:x,char:y){
 }
 
 void:funcion2(){	
-	funcion(a,'a);	; @
+	funcion(a,'a);
 }
 
 //Induccion cuando se llama funciones
