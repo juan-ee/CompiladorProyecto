@@ -28,8 +28,6 @@ CARACTER = '[^ \n\t]'
 STRING = \".+\"
 COMENT_1 = "//".*
 COMENT_M = "/*"[^"*/"]*"*/"
-OP_UNARIO = "++"|"--"
-OP_BINARIO = "+"|"-"|"*"|"/"
 OP_COMP = ">"|"<"|">="|"<="|"!="|"=="
 OP_COMP_L = "&&" | "||"
 
@@ -85,8 +83,12 @@ void { return new Symbol( sym.VOID,yyline+1,yycolumn+1,sym.VOID) ;  }
 
 /*Para Atribuciones*/
 "="		 {return new Symbol( sym.IGUAL , yyline + 1 , yycolumn + 1  ) ;}
-{OP_UNARIO}	 {return new Symbol( sym.OP_UNARIO , yyline + 1 , yycolumn + 1  ) ;}
-{OP_BINARIO}	 {return new Symbol( sym.OP_BINARIO , yyline + 1 , yycolumn + 1  ) ;}
+"++"	{return new Symbol( sym.OP_UNARIO_MAS, yyline + 1 , yycolumn + 1  ) ;}
+"--"	{return new Symbol( sym.OP_UNARIO_MENOS , yyline + 1 , yycolumn + 1  ) ;}
+"+"		{return new Symbol( sym.MAS , yyline + 1 , yycolumn + 1  ) ;}
+"-"		{return new Symbol( sym.MENOS, yyline + 1 , yycolumn + 1  ) ;}
+"*"		{return new Symbol( sym.POR , yyline + 1 , yycolumn + 1  ) ;}
+"/"		{return new Symbol( sym.DIV , yyline + 1 , yycolumn + 1  ) ;}
 
 
 

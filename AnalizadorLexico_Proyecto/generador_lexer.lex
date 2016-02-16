@@ -6,7 +6,7 @@ import java_cup.runtime.*;
 
 %%
 
-%class AnalizadorLexico
+%class AnalizadorLexicoGen
 %cup
 %public
 %unicode
@@ -28,8 +28,6 @@ CARACTER = '[^ \n\t]'
 STRING = \".+\"
 COMENT_1 = "//".*
 COMENT_M = "/*"[^"*/"]*"*/"
-OP_UNARIO = "++"|"--"
-OP_BINARIO = "+"|"-"|"*"|"/"
 OP_COMP = ">"|"<"|">="|"<="|"!="|"=="
 OP_COMP_L = "&&" | "||"
 
@@ -84,10 +82,13 @@ void { return new Symbol( GeneradorSym.VOID,yyline+1,yycolumn+1,GeneradorSym.VOI
 "]"		{ return new Symbol( GeneradorSym.COR_CER,yyline+1,yycolumn+1);} 
 
 /*Para Atribuciones*/
-"="		 {return new Symbol( GeneradorSym.IGUAL , yyline + 1 , yycolumn + 1  ) ;}
-{OP_UNARIO}	 {return new Symbol( GeneradorSym.OP_UNARIO , yyline + 1 , yycolumn + 1  ) ;}
-{OP_BINARIO}	 {return new Symbol( GeneradorSym.OP_BINARIO , yyline + 1 , yycolumn + 1  ) ;}
-
+"="		{return new Symbol( GeneradorSym.IGUAL , yyline + 1 , yycolumn + 1  ) ;}
+"++"	{return new Symbol( GeneradorSym.OP_UNARIO_MAS, yyline + 1 , yycolumn + 1  ) ;}
+"--"	{return new Symbol( GeneradorSym.OP_UNARIO_MENOS , yyline + 1 , yycolumn + 1  ) ;}
+"+"		{return new Symbol( GeneradorSym.MAS , yyline + 1 , yycolumn + 1  ) ;}
+"-"		{return new Symbol( GeneradorSym.MENOS, yyline + 1 , yycolumn + 1  ) ;}
+"*"		{return new Symbol( GeneradorSym.POR , yyline + 1 , yycolumn + 1  ) ;}
+"/"		{return new Symbol( GeneradorSym.DIV , yyline + 1 , yycolumn + 1  ) ;}
 
 
 /*Ignora los espacios y comentarios*/

@@ -212,7 +212,8 @@ action code
 terminal CARACT_ESP;
 
 terminal PAR_AB,PAR_CER,LLAV_AB,LLAV_CER,COR_AB,COR_CER ;
-terminal IGUAL, OP_UNARIO, OP_BINARIO,OP_COMP,OP_COMP_L;
+terminal IGUAL, OP_COMP,OP_COMP_L;
+terminal OP_UNARIO_MAS,OP_UNARIO_MENOS,MAS,MENOS,POR,DIV;
 terminal CARACTER,ENTERO,FLOTANTE,CADENA,BOOLEANO;
 terminal IF,ELSE,THEN,WHILE,DO;
 terminal INPUT,OUTPUT,RETURN;
@@ -233,6 +234,7 @@ non terminal OPR_IN,OPR_OUT,OPR_RTN,OPR_RTN1;
 non terminal C_FLUJO_IF,C_FLUJO_ELSE,C_FLUJO_WHILE,C_FLUJO_DOWHILE;
 non terminal EXPR_F,EXPR_F1,COMP,COMP1,COMP2;
 non terminal LLAM_F,LLAM_F1;
+non terminal OP_UNARIO,OP_BINARIO;
 
 PROGRAMA ::= DECLARACIONES FUNCIONES;
 
@@ -309,6 +311,15 @@ EXPRESION ::= ID:r OP_UNARIO {: if(tipo!=-1){buscar_id_atrib(r,funcion,rleft);} 
  F ::= PAR_AB E PAR_CER
  | ID:r {: if(tipo!=-1){buscar_id_atrib(r,funcion,rleft);} :}
  | VAL:r {: verificar_valor(rleft,rright); :};
+ 
+ OP_UNARIO::=OP_UNARIO_MAS
+ 			|OP_UNARIO_MENOS;
+ 			
+ 
+ OP_BINARIO::=MAS
+ 			|MENOS
+ 			|POR
+ 			DIV;
 
 /*Valores*/
 

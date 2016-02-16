@@ -1,0 +1,7 @@
+storeAI a ==> 0
+storeAI b ==> 0
+storeAI b1 ==> 0
+storeAI acd ==> 0
+storeAI d ==> 0
+addI b, 1 ==> a
+addI b, 1 ==> b

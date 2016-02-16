@@ -14,13 +14,18 @@ public class Aplicacion {
 				AnalizadorLexico lexer2 = new AnalizadorLexico(new FileReader("entrada.c"));
 				GeneradorCup nuevo=new GeneradorCup(lexer2);				
 				nuevo.parse();
-				System.out.println("Funciona!");
+				BufferedReader arch=new BufferedReader(new FileReader("salida.txt"));
+				while(arch.ready()){
+					System.out.println(arch.readLine());
+				}
+				arch.close();
 			}
 
 		} catch (Exception e) {
 			// TODO: Add catch code
 			e.printStackTrace();
 		}
-
+					
+		
 	}
 }

@@ -1,27 +1,58 @@
 package comp;
 
+import java.io.*;
+import java.util.ArrayList;
 import java_cup.runtime.*;
 
 parser code
 {:
-int errores=0;
-
-public void syntax_error( Symbol s ){
-	System.out.println("ERROR SINTACTICO. Linea: " + s.left+", columna: " + s.right );
-	errores++;
-}
-
-public void unrecovered_syntax_error( Symbol s ) throws java.lang.Exception{
-	System.out.println("ERROR SINTACTICO. El sistema no se pudo recuperar, linea");
-	errores++;
-}
 
 :}
 
 
 action code
 {:
-	
+
+String r1;
+int tipo,op_un;
+ArrayList<String> gen=new ArrayList<>();	
+			
+public void escribir(){
+
+try {			
+			PrintWriter salida=new PrintWriter(new FileWriter("salida.txt"));
+			for(String s:gen){
+				salida.println(s);
+			}
+			salida.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+}
+
+public void declarar(String id){	
+	if(tipo==GeneradorSym.INT||tipo==GeneradorSym.FLOAT||tipo==GeneradorSym.BOOL){
+		gen.add("storeAI "+id+" ==> 0");
+	}	
+}
+
+public void op_unario(){
+	if(op_un==GeneradorSym.OP_UNARIO_MAS){
+		gen.add("addI "+r1+", 1 ==> "+r1);
+	}else{
+		gen.add("subI "+r1+", 1 ==> "+r1);
+	}
+}
+
+public void op_unario2(String id){
+	if(op_un==GeneradorSym.OP_UNARIO_MAS){
+		gen.add("addI "+id+", 1 ==> "+r1);
+	}else{
+		gen.add("subI "+id+", 1 ==> "+r1);
+	}
+}
+						
 :}
 
 
@@ -29,7 +60,8 @@ action code
 terminal CARACT_ESP;
 
 terminal PAR_AB,PAR_CER,LLAV_AB,LLAV_CER,COR_AB,COR_CER ;
-terminal IGUAL, OP_UNARIO, OP_BINARIO,OP_COMP,OP_COMP_L;
+terminal IGUAL, OP_COMP,OP_COMP_L;
+terminal OP_UNARIO_MAS,OP_UNARIO_MENOS,MAS,MENOS,POR,DIV;
 terminal CARACTER,ENTERO,FLOTANTE,CADENA,BOOLEANO;
 terminal IF,ELSE,THEN,WHILE,DO;
 terminal INPUT,OUTPUT,RETURN;
@@ -51,6 +83,8 @@ non terminal C_FLUJO_IF,C_FLUJO_ELSE,C_FLUJO_WHILE,C_FLUJO_DOWHILE;
 non terminal EXPR_F,EXPR_F1,COMP,COMP1,COMP2;
 non terminal LLAM_F,LLAM_F1;
 
+non terminal OP_UNARIO,OP_BINARIO;
+
 PROGRAMA ::= DECLARACIONES FUNCIONES;
 
 /*----DECLARACIONES GLOBALES----*/
@@ -59,20 +93,20 @@ DECLARACIONES::= DECLARACIONES DEC_G|DEC_G|DECLARACIONES DEC_V|DEC_V|error END;
 
 /*variables globales*/
 DEC_G::= TIPO DOSPUN DEC_G1;
-DEC_G1::= ID END
-		| ID COMA DEC_G1; 
+DEC_G1::= ID:r1 END {:declarar(r1);:}
+		| ID:r1 COMA {:declarar(r1);:} DEC_G1; 
 		
 /*vectores*/		
 DEC_V::= TIPO DOSPUN DEC_V1;
-DEC_V1::= ID COR_AB ENTERO COR_CER END 
-		| ID COR_AB ENTERO COR_CER COMA DEC_V1;
+DEC_V1::= ID:r1 COR_AB ENTERO COR_CER END {:declarar(r1);:}
+		| ID:r1 COR_AB ENTERO COR_CER COMA {:declarar(r1);:} DEC_V1;
 
 /*tipos*/		
-TIPO ::= INT
-		| FLOAT
-		| CHAR  
-		| BOOL 
-		| STRING;
+TIPO ::= INT {:tipo=GeneradorSym.INT;:}
+		| FLOAT {:tipo=GeneradorSym.FLOAT;:}
+		| CHAR  {:tipo=GeneradorSym.CHAR;:}
+		| BOOL  {:tipo=GeneradorSym.BOOL;:}
+		| STRING {:tipo=GeneradorSym.STRING;:};
 				
 		
 /*----FUNCIONES----*/
@@ -91,14 +125,14 @@ ENCAB1::= COMA TIPO DOSPUN ID ENCAB1 |;
 
 /*--BLOQUE--*/
 
-BLOQUE::= LLAV_AB DEC_L COMANDOS OPR_RTN LLAV_CER | BLOQUE1;
-BLOQUE1::= LLAV_AB COMANDOS LLAV_CER |LLAV_AB LLAV_CER;
+BLOQUE::= LLAV_AB DEC_L COMANDOS OPR_RTN LLAV_CER {: escribir(); :} | BLOQUE1;
+BLOQUE1::= LLAV_AB COMANDOS LLAV_CER {: escribir(); :}|LLAV_AB LLAV_CER {: escribir(); :};
 
 /*Declaracion variables locales*/
 DEC_L::=DEC_L DEC_L1|DEC_L1;
 DEC_L1::= TIPO DOSPUN DEC_L2;
-DEC_L2::= ID  END
-		| ID  COMA DEC_L2 ;
+DEC_L2::= ID:r1  END {:declarar(r1);:}
+		| ID:r1  COMA {:declarar(r1);:} DEC_L2 ;
 
 /*PROGRAMACION QUE SE USARA EN EL BLOQUE*/		
 COMANDOS ::= COMANDOS COMANDOS1|COMANDOS1;
@@ -113,19 +147,28 @@ COMANDOS1 ::= ATRIBUCIONES
  			| error LLAV_CER; 		
 
 /*Para las atribuciones*/
-ATRIBUCIONES::= ID ATRIBUCIONES1
-				|ID COR_AB ENTERO COR_CER ATRIBUCIONES1;
+ATRIBUCIONES::= ID:r {:r1=r;:}ATRIBUCIONES1
+				|ID:r {:r1=r;:} COR_AB ENTERO COR_CER ATRIBUCIONES1;
 
-ATRIBUCIONES1 ::= OP_UNARIO END
+ATRIBUCIONES1 ::= OP_UNARIO {:op_unario();:} END
 				| IGUAL EXPRESION END;
 
 /*Expresiones matematicas*/
-EXPRESION ::= ID  OP_UNARIO
+EXPRESION ::= ID:r OP_UNARIO {:op_unario2(r);r1=r;op_unario();:}
 			|E;
  E ::= E OP_BINARIO F|F;
  F ::= PAR_AB E PAR_CER
  | ID  
  | VAL;
+ 
+ OP_UNARIO::=OP_UNARIO_MAS {:op_un=GeneradorSym.OP_UNARIO_MAS;:}
+ 			|OP_UNARIO_MENOS {:op_un=GeneradorSym.OP_UNARIO_MENOS;:};
+ 			
+ 
+ OP_BINARIO::=MAS
+ 			|MENOS
+ 			|POR
+ 			DIV;
 
 /*Valores*/
 
@@ -150,7 +193,7 @@ OPR_RTN1 ::=ID  END
 	
 	C_FLUJO_DOWHILE ::= DO BLOQUE1 WHILE PAR_AB EXPR_F PAR_CER END;
 	C_FLUJO_WHILE ::= WHILE PAR_AB EXPR_F PAR_CER DO BLOQUE1;
-
+ 
 /*Declaracion de Expresiones para Operaciones logicas*/
 EXPR_F ::= EXPR_F1|ID;
 EXPR_F1 ::= EXPR_F1 OP_COMP_L COMP|COMP;
