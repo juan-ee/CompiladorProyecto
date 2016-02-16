@@ -1,7 +1,12 @@
 storeAI a ==> 0
+storeAI x ==> 0
+storeAI y ==> 0
 storeAI b ==> 0
-storeAI b1 ==> 0
-storeAI acd ==> 0
+storeAI band ==> 0
 storeAI d ==> 0
-addI b, 1 ==> a
-addI b, 1 ==> b
+load d ==> a
+loadI 87 ==> a
+loadI 97 ==> c
+loadI 4.5 ==> b
+mult x, y ==> a
+loadI 0 ==> band

@@ -55,10 +55,11 @@ while	{ return new Symbol( GeneradorSym.WHILE,yyline+1,yycolumn+1);}
 do	{ return new Symbol( GeneradorSym.DO,yyline+1,yycolumn+1);}
 {OP_COMP}	 {return new Symbol( GeneradorSym.OP_COMP , yyline + 1 , yycolumn + 1  ) ;}
 {OP_COMP_L}	 {return new Symbol( GeneradorSym.OP_COMP_L , yyline + 1 , yycolumn + 1  ) ;}
-{ENTERO} { return new Symbol( GeneradorSym.ENTERO, yyline + 1 , yycolumn + 1 , Integer.parseInt(yytext()) );}
-{FLOTANTE} { return new Symbol( GeneradorSym.FLOTANTE, yyline + 1 , yycolumn + 1  );}
-{CARACTER} { return new Symbol( GeneradorSym.CARACTER, yyline + 1 , yycolumn + 1  );}
-{BOOLEANO} { return new Symbol( GeneradorSym.BOOLEANO, yyline + 1 , yycolumn + 1  );}
+{ENTERO} { return new Symbol( GeneradorSym.ENTERO, yyline + 1 , yycolumn + 1 , yytext() );}
+{FLOTANTE} { return new Symbol( GeneradorSym.FLOTANTE, yyline + 1 , yycolumn + 1, yytext() );}
+
+{CARACTER} { return new Symbol( GeneradorSym.CARACTER, yyline + 1 , yycolumn + 1,yytext() );}
+{BOOLEANO} { return new Symbol( GeneradorSym.BOOLEANO, yyline + 1 , yycolumn + 1,yytext() );}
 
 /*Para declaraciones*/
 int  { return new Symbol( GeneradorSym.INT,yyline+1,yycolumn+1,GeneradorSym.INT) ;  }

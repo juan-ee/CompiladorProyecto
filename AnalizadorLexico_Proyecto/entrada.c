@@ -1,13 +1,16 @@
-int: a;
+int: a,x,y;
+char:c;
 float:b;
-float:b1,acd;
+bool:band;
 String:nuevo;
 
-void:main(int:x,char:y){
-	String:c;
+void:main(int:x){	
 	int:d;
-	a=b++;
-	a=b+b;	
-
+	a=d;		
+	a=87;	
+	c='a';
+	b=4.5;
+	a=x*y;
+	band=false;
 	
 }

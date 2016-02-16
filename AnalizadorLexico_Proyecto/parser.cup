@@ -308,7 +308,9 @@ ATRIBUCIONES1 ::= OP_UNARIO END
 EXPRESION ::= ID:r OP_UNARIO {: if(tipo!=-1){buscar_id_atrib(r,funcion,rleft);} :}
 			|E;
 			
- E ::= ID:r {: if(tipo!=-1){ buscar_id_atrib(r,funcion,rleft); } :} OP_BINARIO E1
+ E ::= ID:r {: if(tipo!=-1){ buscar_id_atrib(r,funcion,rleft); } :}
+	| ID:r {: if(tipo!=-1){ buscar_id_atrib(r,funcion,rleft); } :} OP_BINARIO E1
+	| VAL:r {: verificar_valor(rleft,rright); :}
 	| VAL:r {: verificar_valor(rleft,rright); :} OP_BINARIO ID:r1 {: if(tipo!=-1){ buscar_id_atrib(r1,funcion,r1left); } :} ;
 
  E1::= ID:r {: if(tipo!=-1){buscar_id_atrib(r,funcion,rleft);} :}
@@ -318,10 +320,8 @@ EXPRESION ::= ID:r OP_UNARIO {: if(tipo!=-1){buscar_id_atrib(r,funcion,rleft);} 
  			|OP_UNARIO_MENOS;
  			
  
- OP_BINARIO::=MAS
- 			|MENOS
- 			|POR
- 			DIV;
+ OP_BINARIO::=POR|DIV|MAS|MENOS;
+			
 
 /*Valores*/
 
