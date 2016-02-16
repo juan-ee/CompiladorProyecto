@@ -6,7 +6,8 @@ String:nuevo;
 void:main(int:x,char:y){
 	String:c;
 	int:d;
-	a=b++;	
+	a=b++;
+	a=b+b;	
 
 	
 }

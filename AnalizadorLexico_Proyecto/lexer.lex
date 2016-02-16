@@ -1,4 +1,4 @@
-/*Analizador Lexico*/
+/*Analizador Lexico*/ 
 /*Integrantes: Juan Erazo, Luis Unapanta*/
 
 package comp;

@@ -77,7 +77,7 @@ non terminal TIPO,DEC_G,DEC_G1,DEC_V,DEC_V1;
 non terminal FUNCION,FUNC,ENCAB,ENCAB1;
 non terminal BLOQUE,BLOQUE1,DEC_L,DEC_L1,DEC_L2,COMANDOS,COMANDOS1;
 non terminal ATRIBUCIONES,ATRIBUCIONES1;
-non terminal EXPRESION,E,F,VAL;
+non terminal EXPRESION,E,E1,VAL;
 non terminal OPR_IN,OPR_OUT,OPR_RTN,OPR_RTN1;
 non terminal C_FLUJO_IF,C_FLUJO_ELSE,C_FLUJO_WHILE,C_FLUJO_DOWHILE;
 non terminal EXPR_F,EXPR_F1,COMP,COMP1,COMP2;
@@ -156,10 +156,12 @@ ATRIBUCIONES1 ::= OP_UNARIO {:op_unario();:} END
 /*Expresiones matematicas*/
 EXPRESION ::= ID:r OP_UNARIO {:op_unario2(r);r1=r;op_unario();:}
 			|E;
- E ::= E OP_BINARIO F|F;
- F ::= PAR_AB E PAR_CER
- | ID  
- | VAL;
+			
+E ::= ID OP_BINARIO E1	
+	| VAL OP_BINARIO ID;
+	
+E1::= ID
+	| VAL ;
  
  OP_UNARIO::=OP_UNARIO_MAS {:op_un=GeneradorSym.OP_UNARIO_MAS;:}
  			|OP_UNARIO_MENOS {:op_un=GeneradorSym.OP_UNARIO_MENOS;:};
