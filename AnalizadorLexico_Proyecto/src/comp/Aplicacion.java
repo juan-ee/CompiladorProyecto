@@ -9,7 +9,13 @@ public class Aplicacion {
 			AnalizadorLexico lexer = new AnalizadorLexico(new FileReader("entrada.c"));
 			AnalizadorSintactico p = new AnalizadorSintactico(lexer);
 			p.parse();
-			System.out.println("\nRESUMEN\nErrores lexicos: "+lexer.errores+"\nErrores sintacticos: "+p.errores + "\nErrores semanticos: "+p.action_obj.errores);
+			
+			if(lexer.errores==0&&p.errores==0&&p.action_obj.errores==0){
+				AnalizadorLexico lexer2 = new AnalizadorLexico(new FileReader("entrada.c"));
+				GeneradorCup nuevo=new GeneradorCup(lexer2);				
+				nuevo.parse();
+				System.out.println("Funciona!");
+			}
 
 		} catch (Exception e) {
 			// TODO: Add catch code
