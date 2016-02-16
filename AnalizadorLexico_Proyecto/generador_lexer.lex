@@ -53,8 +53,8 @@ then	{ return new Symbol( GeneradorSym.THEN,yyline+1,yycolumn+1);}
 while	{ return new Symbol( GeneradorSym.WHILE,yyline+1,yycolumn+1);}
 
 do	{ return new Symbol( GeneradorSym.DO,yyline+1,yycolumn+1);}
-{OP_COMP}	 {return new Symbol( GeneradorSym.OP_COMP , yyline + 1 , yycolumn + 1  ) ;}
-{OP_COMP_L}	 {return new Symbol( GeneradorSym.OP_COMP_L , yyline + 1 , yycolumn + 1  ) ;}
+{OP_COMP}	 {return new Symbol( GeneradorSym.OP_COMP , yyline + 1 , yycolumn + 1,yytext()) ;}
+{OP_COMP_L}	 {return new Symbol( GeneradorSym.OP_COMP_L , yyline + 1 , yycolumn + 1, yytext()  ) ;}
 {ENTERO} { return new Symbol( GeneradorSym.ENTERO, yyline + 1 , yycolumn + 1 , yytext() );}
 {FLOTANTE} { return new Symbol( GeneradorSym.FLOTANTE, yyline + 1 , yycolumn + 1, yytext() );}
 

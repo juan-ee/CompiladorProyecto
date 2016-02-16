@@ -1,16 +1,18 @@
-int: a,x,y;
-char:c;
-float:b;
-bool:band;
-String:nuevo;
+int: a,x,y,b;
 
-void:main(int:x){	
+
+void:main(){	
 	int:d;
-	a=d;		
-	a=87;	
-	c='a';
-	b=4.5;
-	a=x*y;
-	band=false;
 	
+	y--;
+	a=2;
+	a=x+y;
+	
+	if(a==3)then{
+		a=b;
+	}
+	
+	do{
+		a=d;
+	}while(d>=a);
 }

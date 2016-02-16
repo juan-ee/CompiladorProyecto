@@ -1,12 +1,16 @@
-storeAI a ==> 0
-storeAI x ==> 0
-storeAI y ==> 0
-storeAI b ==> 0
-storeAI band ==> 0
-storeAI d ==> 0
-load d ==> a
-loadI 87 ==> a
-loadI 97 ==> c
-loadI 4.5 ==> b
-mult x, y ==> a
-loadI 0 ==> band
+store a ==> $reg1
+store x ==> $reg2
+store y ==> $reg3
+store b ==> $reg4
+MAIN_entry:
+store d ==> $reg5
+subI $reg3, 1 ==> $reg3
+loadI 2 ==> $reg1
+add $reg2, $reg3 ==> $reg1
+IF_entry:
+cmp_EQI $reg1, 3 ==> $t
+load $reg4 ==> $reg1
+DO_entry:
+load $reg5 ==> $reg1
+WHILE_entry:
+cmp_GE $reg5, $reg1 ==> $t

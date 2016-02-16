@@ -13,9 +13,12 @@ parser code
 action code
 {:
 
+String comparar;
+boolean band;
 String r1,r2,r3;
 int tipo,op_un;
 String val,oper;
+ArrayList<Registro> registros=new ArrayList<>();
 
 ArrayList<String> gen=new ArrayList<>();	
 			
@@ -33,10 +36,12 @@ try {
 		}
 }
 
-public void declarar(String id){	
-	if(tipo==GeneradorSym.INT||tipo==GeneradorSym.FLOAT||tipo==GeneradorSym.BOOL){
-		gen.add("storeAI "+id+" ==> 0");
-	}	
+int pos=1;
+public void declarar(String id){
+	Registro reg_aux=new Registro(id,"$reg"+pos);	
+	pos++;	
+	registros.add(reg_aux);	
+	gen.add("store "+id+" ==> "+reg_aux.reg);	
 }
 
 public void op_unario(){
@@ -66,7 +71,75 @@ public void loadI(){
 public void atrib(){
 	gen.add(oper+" "+r2+", "+r3+" ==> "+r1);
 }			
-			
+
+public void atrib2(){
+	gen.add(oper+" "+r2+", "+val+" ==> "+r1);
+}
+		
+public void atrib3(){
+	gen.add(oper+" "+val+", "+r2+" ==> "+r1);
+}
+
+public String obt_reg(String id){
+		for(Registro n:registros){
+			if(n.id.equals(id)){
+				return n.reg;
+			}
+		}
+		return "";
+}
+
+public void asign_oper(){
+		if(comparar.equals("<")){
+			/*menor*/
+			oper="cmp_LT";
+		}else{
+			if(comparar.equals("<=")){
+				/*menor o igual*/
+				oper="cmp_LE";
+			}else{
+				if(comparar.equals(">")){
+					/*mayor*/
+					oper="cmp_GT";
+				}else{
+					if(comparar.equals(">=")){
+						/*mayor o igual*/
+						oper="cmp_GE";
+					}else{
+						if(comparar.equals("==")){
+							/*igual*/
+							oper="cmp_EQ";
+						}else{
+							/*diferente*/
+							oper="cmp_NE";
+						}
+					}
+				}
+			}
+		}	
+}
+
+public void comparar1(){/*ID ID*/
+	gen.add(oper +" "+ r1 +", "+r2+" ==> $t");
+	
+}
+public void comparar2(){/*VAL ID*/
+	oper+="I";
+	gen.add(oper +" "+ val +", "+r2+" ==> $t");
+}
+public void comparar3(){/*ID VAL*/
+	oper+="I";
+	gen.add(oper +" "+ r1 +", "+val+" ==> $t");
+	
+	
+}
+public void comparar4(){/*VAL VAL*/
+	oper+="I";
+	gen.add(oper +" "+ val +", "+val+" ==> $t");
+	
+}
+
+	
 :}
 
 
@@ -108,13 +181,13 @@ DECLARACIONES::= DECLARACIONES DEC_G|DEC_G|DECLARACIONES DEC_V|DEC_V|error END;
 
 /*variables globales*/
 DEC_G::= TIPO DOSPUN DEC_G1;
-DEC_G1::= ID:r1 END {:declarar(r1);:}
-		| ID:r1 COMA {:declarar(r1);:} DEC_G1; 
+DEC_G1::= ID:r1 END {:declarar(r1); :}
+		| ID:r1 COMA {:declarar(r1); :} DEC_G1; 
 		
 /*vectores*/		
 DEC_V::= TIPO DOSPUN DEC_V1;
-DEC_V1::= ID:r1 COR_AB ENTERO COR_CER END {:declarar(r1);:}
-		| ID:r1 COR_AB ENTERO COR_CER COMA {:declarar(r1);:} DEC_V1;
+DEC_V1::= ID:r1 COR_AB ENTERO COR_CER END {:declarar(r1); :}
+		| ID:r1 COR_AB ENTERO COR_CER COMA {:declarar(r1); :} DEC_V1;
 
 /*tipos*/		
 TIPO ::= INT {:tipo=GeneradorSym.INT;:}
@@ -127,7 +200,7 @@ TIPO ::= INT {:tipo=GeneradorSym.INT;:}
 /*----FUNCIONES----*/
 FUNCIONES::= FUNCIONES FUNCION|FUNCION|error;
 
-FUNCION::=FUNC BLOQUE;
+FUNCION::=FUNC {:gen.add("MAIN_entry:");:} BLOQUE ;
 /*Declaracion de funcion*/
 FUNC::= TIPO DOSPUN ID PAR_AB ENCAB
 	|	VOID DOSPUN ID PAR_AB ENCAB;
@@ -148,7 +221,7 @@ DEC_L::=DEC_L DEC_L1|DEC_L1;
 DEC_L1::= TIPO DOSPUN DEC_L2;
 DEC_L2::= ID:r1  END {:declarar(r1);:}
 		| ID:r1  COMA {:declarar(r1);:} DEC_L2 ;
-
+  
 /*PROGRAMACION QUE SE USARA EN EL BLOQUE*/		
 COMANDOS ::= COMANDOS COMANDOS1|COMANDOS1;
 COMANDOS1 ::= ATRIBUCIONES
@@ -162,23 +235,23 @@ COMANDOS1 ::= ATRIBUCIONES
  			| error LLAV_CER; 		
 
 /*Para las atribuciones*/
-ATRIBUCIONES::= ID:r {:r1=r;:}ATRIBUCIONES1
-				|ID:r {:r1=r;:} COR_AB ENTERO COR_CER ATRIBUCIONES1;
+ATRIBUCIONES::= ID:r {:r1=obt_reg(r);:}ATRIBUCIONES1
+				|ID:r {:r1=obt_reg(r);:} COR_AB ENTERO COR_CER ATRIBUCIONES1;
 
 ATRIBUCIONES1 ::= OP_UNARIO {:op_unario();:} END
 				| IGUAL EXPRESION END;
 
 /*Expresiones matematicas*/
-EXPRESION ::= ID:r OP_UNARIO {:op_unario2(r);r1=r;op_unario();:}
+EXPRESION ::= ID:r OP_UNARIO {:op_unario2(r);r1=obt_reg(r); op_unario();:}
 			|E;
 			
-E ::= ID:r {:r2=r;load();:}
-	|ID:r {:r2=r;:} OP_BINARIO E1
+E ::= ID:r {:r2=obt_reg(r);load();:}
+	|ID:r {:r2=obt_reg(r);:} OP_BINARIO E1
 	| VAL {:loadI();:}
-	| VAL OP_BINARIO ID;
+	| VAL OP_BINARIO ID:r {:oper+="I"; atrib3(); :};
 	
-E1::= ID:r {:r3=r;atrib();:}
-	| VAL ;
+E1::= ID:r {:r3=obt_reg(r); atrib();:}
+	| VAL {:oper+="I"; atrib2(); :} ;
  
  OP_UNARIO::=OP_UNARIO_MAS {:op_un=GeneradorSym.OP_UNARIO_MAS;:}
  			|OP_UNARIO_MENOS {:op_un=GeneradorSym.OP_UNARIO_MENOS;:};
@@ -212,20 +285,20 @@ OPR_RTN1 ::=ID  END
 		   |VAL END;
 
 /*Comandos de control de flujo*/			
-	C_FLUJO_IF ::= IF PAR_AB EXPR_F PAR_CER THEN BLOQUE1 C_FLUJO_ELSE ;
-	C_FLUJO_ELSE ::= ELSE BLOQUE1|;
+	C_FLUJO_IF ::= IF {:gen.add("IF_entry:");:} PAR_AB EXPR_F PAR_CER THEN BLOQUE1 C_FLUJO_ELSE ;
+	C_FLUJO_ELSE ::= ELSE {:gen.add("ELSE_entry:");:}  BLOQUE1|;
 	
-	C_FLUJO_DOWHILE ::= DO BLOQUE1 WHILE PAR_AB EXPR_F PAR_CER END;
-	C_FLUJO_WHILE ::= WHILE PAR_AB EXPR_F PAR_CER DO BLOQUE1;
+	C_FLUJO_DOWHILE ::= DO {:gen.add("DO_entry:");:} BLOQUE1 WHILE {:gen.add("WHILE_entry:");:} PAR_AB EXPR_F PAR_CER END;
+	C_FLUJO_WHILE ::= WHILE {:gen.add("WHILE_entry:");:} PAR_AB EXPR_F PAR_CER DO BLOQUE1;
  
 /*Declaracion de Expresiones para Operaciones logicas*/
 EXPR_F ::= EXPR_F1|ID;
 EXPR_F1 ::= EXPR_F1 OP_COMP_L COMP|COMP;
-COMP ::= COMP1 OP_COMP  COMP2;
-COMP1::= ID  
-		|VAL;		
-COMP2::= ID 
-		|VAL;
+COMP ::= COMP1 OP_COMP:r {: comparar=r+"";asign_oper(); :}  COMP2;
+COMP1::= ID:r {: band=true; r1=obt_reg(r); :}  
+		|VAL {: band=false; :};		
+COMP2::= ID:r {: r2=obt_reg(r); if(band){ comparar1(); }else{ comparar2(); } :}
+		|VAL{: if(band){ comparar3(); }else{ comparar4(); }  :};
 
 /*LLamada a funciones*/
  LLAM_F ::= ID  PAR_AB LLAM_F1 PAR_CER END 

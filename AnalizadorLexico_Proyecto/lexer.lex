@@ -53,8 +53,8 @@ then	{ return new Symbol( sym.THEN,yyline+1,yycolumn+1);}
 while	{ return new Symbol( sym.WHILE,yyline+1,yycolumn+1);}
 
 do	{ return new Symbol( sym.DO,yyline+1,yycolumn+1);}
-{OP_COMP}	 {return new Symbol( sym.OP_COMP , yyline + 1 , yycolumn + 1  ) ;}
-{OP_COMP_L}	 {return new Symbol( sym.OP_COMP_L , yyline + 1 , yycolumn + 1  ) ;}
+{OP_COMP}	 {return new Symbol( sym.OP_COMP , yyline + 1 , yycolumn + 1 , yytext() ) ;}
+{OP_COMP_L}	 {return new Symbol( sym.OP_COMP_L , yyline + 1 , yycolumn + 1 , yytext() ) ;}
 {ENTERO} { return new Symbol( sym.ENTERO, yyline + 1 , yycolumn + 1 , Integer.parseInt(yytext()) );}
 {FLOTANTE} { return new Symbol( sym.FLOTANTE, yyline + 1 , yycolumn + 1  );}
 {CARACTER} { return new Symbol( sym.CARACTER, yyline + 1 , yycolumn + 1  );}
