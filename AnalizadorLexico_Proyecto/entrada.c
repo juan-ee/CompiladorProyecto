@@ -1,4 +1,4 @@
-int: a,x,y,b;
+int: a,x,y,b,v;
 
 
 void:main(){	
